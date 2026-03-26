@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tintswalo Boulders — Management Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1b2d4f;--navy-deep:#0f1e35;--sand:#f7f3ed;--sand-dim:#e4ddd3;--sand-deep:#c9bfb0;
+    --gold:#b8934a;--gold-light:#d4aa6a;--ocean:#1e5f7a;--ocean-light:#2d84a8;
+    --sage:#3a6b45;--sage-light:#4d9060;--rust:#7a2e1e;--rust-light:#b04030;
+    --white:#fff;--muted:#7a8a9a;
+    --c-hk:#25D366;--c-hk-d:#128C7E;
+    --c-kt:#b05a00;--c-kt-d:#8a3f00;
+    --c-svc:#1e5f7a;--c-svc-d:#145070;
+    --c-mnt:#7a4a1e;--c-mnt-d:#5a3010;
+    --c-sec:#3a3a6b;--c-sec-d:#252550;
+    --c-all:#4a1e6b;--c-all-d:#350f50;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--sand);color:var(--navy);font-family:'Montserrat',sans-serif;min-height:100vh}
+
+  .nav{background:var(--navy-deep);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:70px;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:100;box-shadow:0 4px 30px rgba(0,0,0,.35);gap:10px}
+  .nav-brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .nav-logo{height:46px;filter:brightness(0) invert(1);opacity:.9}
+  .nav-sep{width:1px;height:32px;background:rgba(184,147,74,.35)}
+  .nav-tagline{font-size:9px;font-weight:300;letter-spacing:.36em;text-transform:uppercase;color:#e4ddd3;opacity:.7;white-space:nowrap}
+  .nav-teams{display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
+  .nav-btn{padding:6px 10px;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;gap:4px;border:1px solid;white-space:nowrap}
+  .nb-hk{background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.3);color:#4ade80}.nb-hk:hover{background:rgba(37,211,102,.22)}
+  .nb-kt{background:rgba(176,90,0,.12);border-color:rgba(176,90,0,.3);color:#f09030}.nb-kt:hover{background:rgba(176,90,0,.22)}
+  .nb-svc{background:rgba(30,95,122,.15);border-color:rgba(30,95,122,.35);color:#5ab0d0}.nb-svc:hover{background:rgba(30,95,122,.25)}
+  .nb-mnt{background:rgba(122,74,30,.15);border-color:rgba(122,74,30,.35);color:#d09060}.nb-mnt:hover{background:rgba(122,74,30,.25)}
+  .nb-sec{background:rgba(58,58,107,.18);border-color:rgba(58,58,107,.4);color:#9090d0}.nb-sec:hover{background:rgba(58,58,107,.28)}
+  .nb-all{background:rgba(74,30,107,.18);border-color:rgba(74,30,107,.4);color:#c080e0}.nb-all:hover{background:rgba(74,30,107,.28)}
+  .nb-chk{background:rgba(184,147,74,.12);border-color:rgba(184,147,74,.3);color:var(--gold-light)}.nb-chk:hover{background:rgba(184,147,74,.22)}
+  .nav-time{text-align:right;flex-shrink:0}
+  .nav-clock{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:300;color:var(--gold-light);letter-spacing:.04em;line-height:1}
+  .nav-date{font-size:8px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:#c9bfb0;opacity:.6;margin-top:2px}
+
+  .main{max-width:1560px;margin:0 auto;padding:22px 28px 48px}
+  .page-header{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--sand-dim)}
+  .eyebrow{font-size:8px;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+  .pg-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;line-height:1}
+
+  .banners-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+  .banner{border-radius:5px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid}
+  .banner-left{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+  .b-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;flex-shrink:0}
+  .b-title{font-size:7px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;margin-bottom:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:4px}
+  .chip{border-radius:20px;padding:2px 7px;font-size:9px;font-weight:500;white-space:nowrap}
+  .chip-none{font-size:9px;color:var(--muted);font-style:italic}
+  .b-edit{background:none;padding:4px 8px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:7px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;transition:all .2s;flex-shrink:0;border:1px solid}
+
+  .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:18px}
+  .stat{background:var(--white);border:1px solid var(--sand-dim);border-radius:5px;padding:14px 16px;text-align:center;box-shadow:0 1px 6px rgba(27,45,79,.06);transition:all .25s;position:relative;overflow:hidden}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:scaleX(0);transition:transform .25s;transform-origin:left}
+  .stat:hover::before{transform:scaleX(1)}
+  .stat:hover{box-shadow:0 5px 18px rgba(27,45,79,.1);transform:translateY(-1px)}
+  .stat-n{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;line-height:1;margin-bottom:4px}
+  .stat-l{font-size:7px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+
+  .legend-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .legend{display:flex;gap:14px;align-items:center}
+  .li{display:flex;align-items:center;gap:5px;font-size:8px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .pip{width:7px;height:7px;border-radius:50%}
+  .pip-o{background:var(--ocean-light)}.pip-v{background:var(--sage-light)}.pip-c{background:var(--rust-light)}
+
+  .rooms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .rc{background:var(--white);border:1px solid var(--sand-dim);border-radius:5px;overflow:hidden;cursor:pointer;transition:all .25s;box-shadow:0 1px 6px rgba(27,45,79,.05);animation:fadeUp .45s ease both}
+  .rc:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(27,45,79,.12);border-color:var(--gold)}
+  .rc.vac:hover{border-color:var(--sage-light)}
+  .stripe{height:4px}
+  .s-o{background:linear-gradient(90deg,var(--ocean),var(--ocean-light))}
+  .s-v{background:linear-gradient(90deg,var(--sage),var(--sage-light))}
+  .s-c{background:linear-gradient(90deg,var(--rust),var(--rust-light))}
+  .rh{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 9px;border-bottom:1px solid var(--sand-dim)}
+  .rn{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;letter-spacing:.03em}
+  .badge{font-size:7px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+  .b-o{background:rgba(45,132,168,.1);color:var(--ocean);border:1px solid rgba(45,132,168,.25)}
+  .b-v{background:rgba(77,144,96,.1);color:var(--sage);border:1px solid rgba(77,144,96,.25)}
+  .b-c{background:rgba(176,64,48,.1);color:var(--rust-light);border:1px solid rgba(176,64,48,.2)}
+  .rb{padding:11px 14px}
+  .gn{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gs{font-size:7px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .tr{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px}
+  .tb{background:var(--sand);border:1px solid var(--sand-dim);border-radius:3px;padding:5px 8px}
+  .tl{font-size:6px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:1px}
+  .tv{font-family:'Cormorant Garamond',serif;font-size:11px;white-space:nowrap}
+  .ng{margin-bottom:7px}.ng:last-child{margin-bottom:0}
+  .ng-lbl{font-size:6px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .ng-row{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+  .ab{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:3px;font-size:7px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;border:1px solid;cursor:pointer;transition:all .2s;background:none;width:100%}
+  .ab-l{display:flex;align-items:center;gap:3px}
+  .ab-icon{font-size:9px}
+  .wabub{width:14px;height:14px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:white;font-size:8px;flex-shrink:0;opacity:.65;transition:all .2s}
+  .ab:hover .wabub{opacity:1;transform:scale(1.1)}
+  .ab-done{background:rgba(77,144,96,.09);color:var(--sage);border-color:rgba(77,144,96,.28)}.ab-done:hover{background:rgba(77,144,96,.18)}
+  .ab-pend{background:rgba(201,191,176,.18);color:var(--sand-deep);border-color:var(--sand-dim)}.ab-pend:hover{background:rgba(37,211,102,.07);border-color:rgba(37,211,102,.3);color:var(--sage)}
+  .ab-kt-on{background:rgba(176,90,0,.09);color:var(--c-kt);border-color:rgba(176,90,0,.28)}.ab-kt-on:hover{background:rgba(176,90,0,.16)}
+  .ab-kt-off{background:rgba(201,191,176,.18);color:var(--sand-deep);border-color:var(--sand-dim)}.ab-kt-off:hover{background:rgba(176,90,0,.07);border-color:rgba(176,90,0,.3);color:var(--c-kt)}
+
+  /* SPLIT BUTTON — left side toggles, right side sends WA */
+  .ab-split{display:flex;border-radius:3px;overflow:hidden;border:1px solid;transition:all .2s}
+  .ab-split.ab-done{background:rgba(77,144,96,.09);border-color:rgba(77,144,96,.28)}
+  .ab-split.ab-pend{background:rgba(201,191,176,.18);border-color:var(--sand-dim)}
+  .ab-split.ab-kt-on{background:rgba(176,90,0,.09);border-color:rgba(176,90,0,.28)}
+  .ab-split.ab-kt-off{background:rgba(201,191,176,.18);border-color:var(--sand-dim)}
+  .ab-toggle{flex:1;display:flex;align-items:center;gap:4px;padding:5px 7px;background:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:7px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;transition:background .15s;color:inherit}
+  .ab-toggle:hover{background:rgba(0,0,0,.04)}
+  .ab-icon{font-size:9px}
+  .ab-send{width:24px;flex-shrink:0;background:none;border:none;border-left:1px solid rgba(0,0,0,.08);cursor:pointer;font-size:10px;transition:all .15s;display:flex;align-items:center;justify-content:center;padding:0;color:inherit;opacity:.6}
+  .ab-send:hover{background:rgba(37,211,102,.15);opacity:1;border-left-color:rgba(37,211,102,.3)}
+  .ab-split.ab-done .ab-toggle{color:var(--sage)}
+  .ab-split.ab-pend .ab-toggle{color:var(--sand-deep)}
+  .ab-split.ab-kt-on .ab-toggle{color:var(--c-kt)}
+  .ab-split.ab-kt-off .ab-toggle{color:var(--sand-deep)}
+  .vac-body{padding:20px 14px;text-align:center}
+  .vac-icon{font-size:22px;margin-bottom:6px;opacity:.15}
+  .vac-txt{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;opacity:.3}
+
+  /* OVERLAYS */
+  .ov{position:fixed;inset:0;background:rgba(8,15,28,.65);backdrop-filter:blur(5px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+  .ov.open{display:flex}
+  .modal{background:var(--white);border-radius:7px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim)}
+  .mtop{height:4px;border-radius:7px 7px 0 0}
+  .mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 12px;border-bottom:1px solid var(--sand-dim)}
+  .mht{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400}
+  .mx{background:none;border:1px solid var(--sand-dim);color:var(--muted);width:28px;height:28px;border-radius:3px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .mx:hover{background:var(--sand);border-color:var(--navy);color:var(--navy)}
+  .mb{padding:18px 22px}
+  .ms{margin-bottom:16px}
+  .mst{font-size:7px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--sand-dim)}
+  .mg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .mf{background:var(--sand);border:1px solid var(--sand-dim);border-radius:3px;padding:7px 11px;transition:border-color .2s}
+  .mf:focus-within{border-color:var(--gold)}
+  .mf label{display:block;font-size:7px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .mf input,.mf select{background:none;border:none;color:var(--navy);font-family:'Cormorant Garamond',serif;font-size:14px;width:100%;outline:none}
+  .mf select{font-family:'Montserrat',sans-serif;font-size:11px;cursor:pointer}
+  .togr{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.04)}
+  .togr:last-child{border-bottom:none}
+  .togl{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+  .tog{position:relative;width:38px;height:21px;flex-shrink:0}
+  .tog input{display:none}
+  .ttr{position:absolute;inset:0;background:var(--sand-dim);border-radius:11px;border:1px solid var(--sand-deep);cursor:pointer;transition:all .25s}
+  .tth{position:absolute;top:3px;left:3px;width:13px;height:13px;background:white;border-radius:50%;transition:transform .25s,background .25s;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+  .tog input:checked~.ttr{background:rgba(184,147,74,.22);border-color:var(--gold)}
+  .tog input:checked~.ttr .tth{transform:translateX(17px);background:var(--gold)}
+  .na{width:100%;background:var(--sand);border:1px solid var(--sand-dim);border-radius:3px;padding:7px 11px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;resize:none;height:52px;transition:border-color .2s}
+  .na:focus{border-color:var(--gold)}
+  .btr{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;padding-top:12px;border-top:1px solid var(--sand-dim)}
+  .btn{padding:7px 18px;border-radius:3px;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+  .bg{background:none;border:1px solid var(--sand-deep);color:var(--muted)}.bg:hover{border-color:var(--navy);color:var(--navy)}
+  .bp{background:var(--navy);border:1px solid var(--navy);color:white}.bp:hover{background:var(--navy-deep)}
+  .bd{background:none;border:1px solid rgba(176,64,48,.3);color:var(--rust-light)}.bd:hover{background:rgba(176,64,48,.07)}
+
+  /* TEAM MODAL */
+  .team-modal{background:var(--white);border-radius:7px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim)}
+  .tm-h{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid}
+  .tm-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:300;color:white}
+  .tm-sub{font-size:9px;color:rgba(255,255,255,.5);margin-top:2px}
+  .tm-b{padding:20px 22px}
+  .staff-list{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+  .si{display:flex;align-items:center;gap:9px;background:var(--sand);border:1px solid var(--sand-dim);border-radius:4px;padding:9px 11px}
+  .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0}
+  .si-info{flex:1;min-width:0}
+  .si-name{font-size:11px;font-weight:600}
+  .si-ph{font-size:10px;color:var(--muted)}
+  .sdel{background:none;border:1px solid rgba(176,64,48,.25);color:var(--rust-light);width:26px;height:26px;border-radius:3px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+  .sdel:hover{background:rgba(176,64,48,.08);border-color:var(--rust-light)}
+  .empty-s{text-align:center;padding:12px;font-size:11px;color:var(--muted);font-style:italic;background:var(--sand);border-radius:4px;border:1px dashed var(--sand-dim)}
+  .add-form{border-radius:5px;padding:12px;margin-bottom:12px;border:1px dashed}
+  .add-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+  .af{background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:7px 10px;transition:border-color .2s}
+  .af label{display:block;font-size:7px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .af input{background:none;border:none;color:var(--navy);font-family:'Montserrat',sans-serif;font-size:11px;width:100%;outline:none}
+  .add-btn{border:none;color:white;padding:8px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s;width:100%}
+  .all-note{font-size:9px;color:var(--muted);font-style:italic;margin-top:4px}
+
+  /* DISPATCH MODAL */
+  .dis-modal{background:var(--white);border-radius:7px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim);overflow:hidden}
+  .dis-h{padding:14px 18px;display:flex;align-items:center;gap:11px}
+  .dis-icon{font-size:22px}
+  .dis-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;color:white}
+  .dis-sub{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px}
+  .dis-b{padding:16px 18px;overflow-y:auto;max-height:80vh}
+  .dis-info{display:flex;align-items:center;gap:10px;background:var(--sand);border:1px solid var(--sand-dim);border-radius:4px;padding:10px 12px;margin-bottom:12px}
+  .dis-room-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500}
+  .dis-room-det{font-size:9px;color:var(--muted);margin-top:1px}
+  .dis-lbl{font-size:7px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+
+  /* MGR NUMBER */
+  .mgr-wrap{background:rgba(27,45,79,.04);border:1px solid var(--sand-dim);border-radius:4px;padding:10px 12px;margin-bottom:12px}
+  .mgr-lbl{font-size:7px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+  .mgr-row{display:flex;align-items:center;gap:7px}
+  .mgr-input{background:var(--sand);border:1px solid var(--sand-dim);border-radius:3px;padding:6px 10px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;flex:1;transition:border-color .2s}
+  .mgr-input:focus{border-color:var(--gold)}
+  .mgr-save{background:var(--navy);border:none;color:white;padding:6px 12px;border-radius:3px;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+  .mgr-saved{font-size:9px;color:var(--sage);margin-top:4px;display:none}
+
+  /* STAFF DISPATCH ROWS */
+  .dis-staff{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .dis-row{background:var(--sand);border:1px solid var(--sand-dim);border-radius:5px;overflow:hidden}
+  .dis-row-top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px}
+  .dis-row-l{display:flex;align-items:center;gap:8px}
+  .dis-name{font-size:11px;font-weight:600}
+  .dis-phone{font-size:10px;color:var(--muted)}
+
+  /* THE KEY: WhatsApp plain-text checklist button */
+  .dis-chk-wa{display:flex;align-items:center;gap:5px;background:var(--c-hk);color:white;text-decoration:none;padding:8px 13px;border-radius:4px;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;transition:all .2s;white-space:nowrap;border:none;cursor:pointer;font-family:'Montserrat',sans-serif}
+  .dis-chk-wa:hover{background:var(--c-hk-d);transform:scale(1.02)}
+  .dis-chk-wa.sent{background:var(--sage-light)!important}
+  .dis-chk-wa:disabled{opacity:.6;cursor:wait;transform:none}
+
+  /* CHECKLIST PREVIEW inside dispatch row */
+  .dis-tasks-preview{background:rgba(37,211,102,.04);border-top:1px solid rgba(37,211,102,.12);padding:10px 12px}
+  .dis-tasks-preview-title{font-size:7px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--c-hk-d);margin-bottom:6px}
+  .dis-tasks-grid{display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto}
+  .dis-task-item{font-size:10px;color:var(--navy);display:flex;align-items:flex-start;gap:5px;line-height:1.3}
+  .dis-task-num{font-size:9px;font-weight:600;color:var(--gold);flex-shrink:0;min-width:16px}
+
+  /* KT DISPATCH */
+  .dis-kt-link{display:flex;align-items:center;gap:5px;color:white;text-decoration:none;padding:7px 12px;border-radius:3px;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+  .dis-kt-link:hover{filter:brightness(1.1)}
+  .dis-kt-link.sent{background:var(--sage-light)!important}
+
+  .dis-foot{display:flex;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--sand-dim);margin-top:4px}
+
+  /* TASK SETTINGS MODAL */
+  .tasks-modal{background:var(--white);border-radius:7px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim)}
+  .tasks-h{background:var(--navy-deep);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+  .tasks-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:300;color:var(--gold-light)}
+  .tasks-b{padding:20px 22px}
+  .tasks-tab-row{display:flex;gap:8px;margin-bottom:16px}
+  .tasks-tab{padding:7px 16px;border-radius:4px;cursor:pointer;font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s;border:1px solid var(--sand-dim);background:none;color:var(--muted);font-family:'Montserrat',sans-serif}
+  .tasks-tab.active{background:var(--navy);border-color:var(--navy);color:white}
+  .task-section{margin-bottom:16px}
+  .task-sec-title{font-size:8px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--sand-dim)}
+  .task-row{display:flex;align-items:center;justify-content:space-between;background:var(--sand);border:1px solid var(--sand-dim);border-radius:3px;padding:7px 10px;margin-bottom:5px;gap:8px}
+  .task-row-text{font-size:11px;font-weight:500;flex:1}
+  .task-row-del{background:none;border:1px solid rgba(176,64,48,.2);color:var(--rust-light);width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+  .task-row-del:hover{background:rgba(176,64,48,.07)}
+  .add-task-row{display:flex;gap:7px;margin-top:8px}
+  .add-task-input{flex:1;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:7px 10px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;transition:border-color .2s}
+  .add-task-input:focus{border-color:var(--gold)}
+  .add-task-btn{background:var(--gold);border:none;color:white;padding:7px 14px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+  .add-task-btn:hover{background:#9a7530}
+
+  /* HOSTED URL FIELD */
+  .chk-url-wrap{background:linear-gradient(135deg,rgba(184,147,74,.06),rgba(184,147,74,.03));border:1px solid rgba(184,147,74,.25);border-radius:6px;padding:14px 16px;margin-bottom:18px}
+  .chk-url-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .chk-url-title{font-size:9px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+  .chk-url-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+  .chk-url-status.set{background:rgba(77,144,96,.15);color:var(--sage);border:1px solid rgba(77,144,96,.3)}
+  .chk-url-status.unset{background:rgba(201,191,176,.3);color:var(--muted);border:1px solid var(--sand-dim)}
+  .chk-url-desc{font-size:10px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+  .chk-url-desc code{background:rgba(184,147,74,.1);color:var(--gold);padding:1px 5px;border-radius:3px;font-size:9px}
+  .chk-url-desc strong{color:var(--navy);font-weight:600}
+  .chk-url-row{display:flex;gap:7px}
+  .chk-url-input{flex:1;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:8px 11px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;transition:border-color .2s}
+  .chk-url-input:focus{border-color:var(--gold)}
+  .chk-url-save{background:var(--navy);border:none;color:white;padding:8px 16px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+  .chk-url-save:hover{background:var(--navy-deep)}
+  .chk-url-clear-row{margin-top:7px}
+  .chk-url-clear{background:none;border:none;color:var(--rust-light);font-family:'Montserrat',sans-serif;font-size:9px;cursor:pointer;padding:0;text-decoration:underline}
+  .chk-url-clear:hover{color:var(--rust)}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy-deep);color:white;padding:9px 20px;border-radius:4px;border-left:3px solid #25D366;font-size:10px;font-weight:500;letter-spacing:.1em;opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* DINNER MENU MODAL */
+  .menu-modal{background:var(--white);border-radius:7px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim)}
+  .menu-h{background:linear-gradient(135deg,#3d0a0a,#6b1515);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #c0392b}
+  .menu-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#ffcccc}
+  .menu-sub{font-size:9px;color:rgba(255,200,200,.55);margin-top:2px;letter-spacing:.1em}
+  .menu-b{padding:20px 22px}
+  .menu-meta-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .menu-sections{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
+  .menu-section{background:var(--sand);border:1px solid var(--sand-dim);border-radius:5px;overflow:hidden}
+  .menu-section-head{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(176,64,48,.06);border-bottom:1px solid var(--sand-dim)}
+  .menu-section-name{background:none;border:none;font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--navy);outline:none;flex:1;font-weight:400}
+  .menu-section-del{background:none;border:1px solid rgba(176,64,48,.2);color:var(--rust-light);width:24px;height:24px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .menu-section-del:hover{background:rgba(176,64,48,.07)}
+  .menu-items{padding:8px 10px;display:flex;flex-direction:column;gap:5px}
+  .menu-item-row{display:flex;align-items:center;gap:7px}
+  .menu-item-name{flex:2;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:5px 8px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;transition:border-color .2s}
+  .menu-item-name:focus{border-color:var(--gold)}
+  .menu-item-desc{flex:3;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:5px 8px;font-family:'Montserrat',sans-serif;font-size:10px;color:var(--muted);outline:none;transition:border-color .2s}
+  .menu-item-desc:focus{border-color:var(--gold)}
+  .menu-item-del{background:none;border:1px solid rgba(176,64,48,.15);color:var(--rust-light);width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .menu-item-del:hover{background:rgba(176,64,48,.07)}
+  .menu-add-item-btn{background:none;border:1px dashed var(--sand-deep);color:var(--muted);padding:5px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;width:100%;margin-top:5px;transition:all .2s}
+  .menu-add-item-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .menu-add-section-btn{background:rgba(176,64,48,.07);border:1px dashed rgba(176,64,48,.3);color:var(--rust-light);padding:9px;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;width:100%;margin-bottom:16px;transition:all .2s}
+  .menu-add-section-btn:hover{background:rgba(176,64,48,.12)}
+  .menu-preview-wrap{background:rgba(37,211,102,.04);border:1px solid rgba(37,211,102,.15);border-radius:5px;padding:14px;margin-bottom:16px}
+  .menu-preview-title{font-size:8px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--c-hk-d);margin-bottom:8px}
+  .menu-preview-box{font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);white-space:pre-wrap;line-height:1.6;max-height:200px;overflow-y:auto;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:10px 12px}
+  .menu-guests-wrap{margin-bottom:16px}
+  .menu-guests-title{font-size:8px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--sand-dim)}
+  .menu-toggle-row{display:flex;align-items:center;margin-bottom:10px}
+  .menu-guest-list{display:flex;flex-direction:column;gap:6px}
+  .menu-guest-row{background:var(--sand);border:1px solid var(--sand-dim);border-radius:4px;padding:9px 12px}
+  .menu-guest-row-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .menu-guest-info{display:flex;align-items:center;gap:9px;flex:1}
+  .menu-guest-av{width:28px;height:28px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0}
+  .menu-guest-name{font-size:11px;font-weight:600;color:var(--navy)}
+  .menu-guest-room{font-size:9px;color:var(--muted)}
+  .menu-guest-phone-wrap{display:flex;align-items:center;gap:5px;flex-shrink:0}
+  .menu-guest-phone{background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:4px 8px;font-family:'Montserrat',sans-serif;font-size:10px;color:var(--navy);outline:none;width:140px;transition:border-color .2s}
+  .menu-guest-phone:focus{border-color:var(--gold)}
+  .menu-send-one{display:flex;align-items:center;gap:4px;background:var(--c-hk);color:white;text-decoration:none;padding:5px 10px;border-radius:3px;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;transition:all .2s;white-space:nowrap;flex-shrink:0;border:none;cursor:pointer;font-family:'Montserrat',sans-serif}
+  .menu-send-one:hover{background:var(--c-hk-d)}
+  .menu-send-one.sent{background:var(--sage-light)!important}
+  .menu-send-one:disabled{opacity:.6;cursor:wait}
+  .menu-no-phone{font-size:9px;color:var(--muted);font-style:italic}
+  .menu-foot{display:flex;gap:9px;justify-content:flex-end;padding-top:14px;border-top:1px solid var(--sand-dim)}
+  .menu-send-btn{background:linear-gradient(135deg,#c0392b,#8b1a1a);border:none;color:white;padding:10px 24px;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s;box-shadow:0 4px 14px rgba(176,64,48,.3)}
+  .menu-send-btn:hover{background:linear-gradient(135deg,#a93226,#7a1515);box-shadow:0 6px 20px rgba(176,64,48,.4)}
+  .menu-url-wrap{background:linear-gradient(135deg,rgba(184,147,74,.06),rgba(184,147,74,.03));border:1px solid rgba(184,147,74,.25);border-radius:5px;padding:13px 15px;margin-bottom:14px}
+  .menu-url-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+  .menu-url-title{font-size:8px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+  .menu-url-status{font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px}
+  .menu-url-status.set{background:rgba(77,144,96,.15);color:var(--sage);border:1px solid rgba(77,144,96,.3)}
+  .menu-url-status.unset{background:rgba(201,191,176,.3);color:var(--muted);border:1px solid var(--sand-dim)}
+  .menu-url-desc{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:9px}
+  .menu-url-desc code{background:rgba(184,147,74,.1);color:var(--gold);padding:1px 5px;border-radius:3px;font-size:9px}
+  .menu-url-desc strong{color:var(--navy);font-weight:600}
+  .menu-url-row{display:flex;gap:7px}
+  .menu-url-input{flex:1;background:white;border:1px solid var(--sand-dim);border-radius:3px;padding:7px 10px;font-family:'Montserrat',sans-serif;font-size:11px;color:var(--navy);outline:none;transition:border-color .2s}
+  .menu-url-input:focus{border-color:var(--gold)}
+  .menu-url-save{background:var(--navy);border:none;color:white;padding:7px 14px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+  .menu-url-save:hover{background:var(--navy-deep)}
+  .menu-url-clear-row{margin-top:6px}
+  .menu-url-clear{background:none;border:none;color:var(--rust-light);font-family:'Montserrat',sans-serif;font-size:9px;cursor:pointer;padding:0;text-decoration:underline}
+  .menu-modal::-webkit-scrollbar{width:4px}
+  .menu-modal::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:2px}
+
+  /* ── EXCEL IMPORT MODAL ── */
+  .import-modal{background:var(--white);border-radius:7px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim)}
+  .import-h{background:var(--navy-deep);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--sage-light)}
+  .import-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:300;color:#8de0a0}
+  .import-sub{font-size:9px;color:rgba(255,255,255,.45);margin-top:2px;letter-spacing:.1em}
+  .import-b{padding:20px 22px}
+  .import-drop{border:2px dashed var(--sand-deep);border-radius:6px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;background:var(--sand)}
+  .import-drop:hover,.import-drop.drag-over{border-color:var(--sage-light);background:rgba(77,144,96,.05)}
+  .import-drop.drag-over{transform:scale(1.01)}
+  .import-drop-icon{font-size:36px;margin-bottom:10px;opacity:.6}
+  .import-drop-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--navy);margin-bottom:4px}
+  .import-drop-sub{font-size:10px;color:var(--muted);letter-spacing:.05em}
+  .import-guide{background:rgba(27,45,79,.03);border:1px solid var(--sand-dim);border-radius:5px;padding:13px 15px;margin-bottom:14px}
+  .import-guide-title{font-size:8px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+  .import-guide-table{background:white;border:1px solid var(--sand-dim);border-radius:3px;overflow:hidden;margin-bottom:8px;overflow-x:auto}
+  .igt-header,.igt-row{display:grid;grid-template-columns:repeat(10,1fr);gap:0}
+  .igt-header span{background:var(--navy-deep);color:rgba(255,255,255,.7);font-size:8px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:5px 6px;border-right:1px solid rgba(255,255,255,.08);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .igt-row span{font-size:9px;color:var(--navy);padding:5px 6px;border-right:1px solid var(--sand-dim);border-top:1px solid var(--sand-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .igt-row.example span{font-style:italic;opacity:.7}
+  .import-guide-notes{font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+  .import-guide-notes em{color:var(--navy);font-style:normal;font-weight:500}
+  .import-template-btn{background:none;border:1px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;transition:all .2s}
+  .import-template-btn:hover{background:rgba(184,147,74,.1)}
+  .import-preview-wrap{margin-bottom:14px}
+  .import-preview-title{font-size:9px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--sage);margin-bottom:8px}
+  .import-preview-scroll{overflow-x:auto;max-height:240px;border:1px solid var(--sand-dim);border-radius:4px}
+  .import-preview-table{width:100%;border-collapse:collapse;font-size:10px}
+  .import-preview-table th{background:var(--navy-deep);color:rgba(255,255,255,.7);font-size:8px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:6px 8px;white-space:nowrap;position:sticky;top:0}
+  .import-preview-table td{padding:6px 8px;border-bottom:1px solid var(--sand-dim);color:var(--navy);white-space:nowrap}
+  .import-preview-table tr:hover td{background:rgba(184,147,74,.05)}
+  .import-preview-table .row-ok td{border-left:3px solid var(--sage-light)}
+  .import-preview-table .row-warn td{border-left:3px solid var(--gold);background:rgba(184,147,74,.05)}
+  .import-preview-table .row-err td{border-left:3px solid var(--rust-light);background:rgba(176,64,48,.04)}
+  .import-errors{background:rgba(176,64,48,.06);border:1px solid rgba(176,64,48,.2);border-radius:4px;padding:10px 13px;font-size:10px;color:var(--rust-light);line-height:1.7;margin-top:8px}
+  .import-foot{display:flex;gap:9px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--sand-dim)}
+  .planner-modal{background:var(--white);border-radius:7px;width:100%;max-width:1100px;max-height:93vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim);display:flex;flex-direction:column}
+  .planner-h{background:var(--navy-deep);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold);flex-shrink:0}
+  .planner-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold-light)}
+  .planner-sub{font-size:9px;color:rgba(255,255,255,.45);margin-top:2px;letter-spacing:.1em}
+  .planner-week-nav{display:flex;align-items:center;gap:10px}
+  .planner-week-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:28px;height:28px;border-radius:3px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .planner-week-btn:hover{background:rgba(255,255,255,.16);color:white}
+  .planner-week-label{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap;min-width:180px;text-align:center}
+  .planner-today-btn{background:rgba(184,147,74,.2);border:1px solid rgba(184,147,74,.4);color:var(--gold-light);padding:5px 12px;border-radius:3px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;transition:all .2s}
+  .planner-today-btn:hover{background:rgba(184,147,74,.3)}
+
+  .planner-body{padding:16px 20px;overflow-x:auto;flex:1}
+
+  /* GRID */
+  .planner-grid{display:grid;min-width:700px;border:1px solid var(--sand-dim);border-radius:5px;overflow:hidden}
+  .planner-header-row{display:contents}
+  .planner-col-room{background:var(--navy-deep);padding:10px 14px;font-size:8px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);border-right:1px solid rgba(255,255,255,.08);display:flex;align-items:center}
+  .planner-col-day{background:var(--navy-deep);padding:8px 6px;text-align:center;border-right:1px solid rgba(255,255,255,.08)}
+  .planner-col-day:last-child{border-right:none}
+  .planner-day-name{font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+  .planner-day-num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:white;line-height:1;margin-top:2px}
+  .planner-day-today .planner-day-name{color:var(--gold)}
+  .planner-day-today .planner-day-num{color:var(--gold-light)}
+
+  /* ROOM ROWS */
+  .planner-room-row{display:contents}
+  .planner-room-label{background:var(--sand);border-top:1px solid var(--sand-dim);border-right:1px solid var(--sand-dim);padding:8px 14px;display:flex;align-items:center;gap:8px;min-height:52px}
+  .planner-room-name{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:var(--navy);white-space:nowrap}
+  .planner-room-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .ps-occ{background:var(--ocean-light)} .ps-vac{background:var(--sage-light)} .ps-chk{background:var(--rust-light)}
+
+  /* DAY CELLS */
+  .planner-cell{border-top:1px solid var(--sand-dim);border-right:1px solid var(--sand-dim);padding:3px;position:relative;min-height:52px;cursor:pointer;transition:background .15s}
+  .planner-cell:last-child{border-right:none}
+  .planner-cell:hover{background:rgba(100,130,200,.05)}
+  .planner-cell.today-col{background:rgba(184,147,74,.03)}
+
+  /* BOOKING BLOCK */
+  .booking-block{border-radius:3px;padding:4px 7px;font-size:9px;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;min-height:40px;display:flex;flex-direction:column;justify-content:center}
+  .booking-block:hover{filter:brightness(1.1);transform:scale(1.02)}
+  .booking-block.occ{background:rgba(45,132,168,.18);border:1px solid rgba(45,132,168,.4);color:var(--ocean)}
+  .booking-block.chk{background:rgba(176,64,48,.12);border:1px solid rgba(176,64,48,.3);color:var(--rust-light)}
+  .bb-name{font-family:'Cormorant Garamond',serif;font-size:12px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+  .bb-dates{font-size:8px;opacity:.7;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bb-del{position:absolute;top:2px;right:3px;background:none;border:none;cursor:pointer;font-size:10px;opacity:0;transition:opacity .15s;color:var(--rust-light);line-height:1;padding:1px 2px}
+  .booking-block:hover .bb-del{opacity:1}
+
+  /* EMPTY CELL HINT */
+  .cell-add{width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;font-size:16px;color:var(--muted)}
+  .planner-cell:hover .cell-add{opacity:.4}
+
+  /* BOOKING EDIT MODAL */
+  .booking-modal{background:var(--white);border-radius:7px;width:100%;max-width:480px;box-shadow:0 40px 80px rgba(0,0,0,.3);border:1px solid var(--sand-dim);overflow:hidden}
+  .booking-h{background:var(--navy-deep);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold)}
+  .booking-h-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold-light)}
+  .booking-h-room{font-size:9px;color:rgba(255,255,255,.5);margin-top:2px;letter-spacing:.15em;text-transform:uppercase}
+  .booking-b{padding:18px 20px}
+  .booking-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .booking-foot{display:flex;gap:8px;justify-content:space-between;padding-top:12px;border-top:1px solid var(--sand-dim)}
+
+  /* LEGEND */
+  .planner-legend{display:flex;gap:16px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .pl-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .pl-swatch{width:14px;height:14px;border-radius:2px;flex-shrink:0}
+
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .rc:nth-child(1){animation-delay:.05s}.rc:nth-child(2){animation-delay:.10s}.rc:nth-child(3){animation-delay:.15s}
+  .rc:nth-child(4){animation-delay:.20s}.rc:nth-child(5){animation-delay:.25s}.rc:nth-child(6){animation-delay:.30s}
+  .rc:nth-child(7){animation-delay:.35s}.rc:nth-child(8){animation-delay:.40s}.rc:nth-child(9){animation-delay:.45s}
+  .modal::-webkit-scrollbar,.team-modal::-webkit-scrollbar,.tasks-modal::-webkit-scrollbar,.dis-modal::-webkit-scrollbar{width:4px}
+  .modal::-webkit-scrollbar-thumb,.team-modal::-webkit-scrollbar-thumb,.tasks-modal::-webkit-scrollbar-thumb,.dis-modal::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <img class="nav-logo" src="data:image/png;base64,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" alt="Tintswalo Boulders">
+    <div class="nav-sep"></div>
+    <div class="nav-tagline">General Manager</div>
+  </div>
+  <div class="nav-teams">
+    <button class="nav-btn nb-hk"  onclick="openTeam('hk')">🧹 HK</button>
+    <button class="nav-btn nb-kt"  onclick="openTeam('kt')">🍽️ Kitchen</button>
+    <button class="nav-btn nb-svc" onclick="openTeam('svc')">🛎️ Service</button>
+    <button class="nav-btn nb-mnt" onclick="openTeam('mnt')">🔧 Maint.</button>
+    <button class="nav-btn nb-sec" onclick="openTeam('sec')">🛡️ Security</button>
+    <button class="nav-btn nb-all" onclick="openTeam('all')">📢 All Staff</button>
+    <button class="nav-btn nb-chk" onclick="openTaskSettings()">📋 Checklists</button>
+    <button class="nav-btn" style="background:rgba(220,50,50,.12);border-color:rgba(220,50,50,.3);color:#ff9090" onclick="openMenuModal()">🍷 Dinner Menu</button>
+    <button class="nav-btn" style="background:rgba(100,130,200,.14);border-color:rgba(100,130,200,.35);color:#a0b8f0" onclick="openPlanner()">📅 Weekly Planner</button>
+  </div>
+  <div class="nav-time">
+    <div class="nav-clock" id="clock">--:--</div>
+    <div class="nav-date"  id="navdate">---</div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <div class="eyebrow">Hotel Operations</div>
+    <div class="pg-title">Property Overview</div>
+  </div>
+  <div class="banners-grid" id="bannersGrid"></div>
+  <div class="stats-bar"    id="statsBar"></div>
+  <div class="legend-row">
+    <div class="legend">
+      <div class="li"><div class="pip pip-o"></div>Occupied</div>
+      <div class="li"><div class="pip pip-v"></div>Vacant</div>
+      <div class="li"><div class="pip pip-c"></div>Checking Out</div>
+    </div>
+    <div id="chkHint" style="font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)">
+      📱 HK checklist sent as WhatsApp message · Staff reply ✅ when done
+    </div>
+  </div>
+  <div class="rooms-grid" id="roomsGrid"></div>
+</div>
+
+<!-- ROOM MODAL -->
+<div class="ov" id="ovRoom">
+  <div class="modal">
+    <div class="mtop" id="mStripe"></div>
+    <div class="mh"><div class="mht" id="mTitle"></div><button class="mx" onclick="closeRoom()">✕</button></div>
+    <div class="mb" id="mBody"></div>
+  </div>
+</div>
+
+<!-- TEAM SETTINGS -->
+<div class="ov" id="ovTeam">
+  <div class="team-modal">
+    <div class="tm-h" id="tmH">
+      <div><div class="tm-title" id="tmTitle"></div><div class="tm-sub" id="tmSub"></div></div>
+      <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closeTeam()">✕</button>
+    </div>
+    <div class="tm-b">
+      <div class="mst">Current Team</div>
+      <div class="staff-list" id="staffList"></div>
+      <div class="add-form" id="addForm">
+        <div class="mst" id="addTitle">+ Add Member</div>
+        <div class="add-grid">
+          <div class="af"><label>Name</label><input id="aName" type="text" placeholder="e.g. Sipho"></div>
+          <div class="af"><label>WhatsApp Number</label><input id="aPhone" type="tel" placeholder="+27 82 000 0000"></div>
+        </div>
+        <button class="add-btn" id="addBtn" onclick="addStaff()">Add to Team</button>
+      </div>
+      <div id="allNote" style="display:none" class="all-note">📢 Shows every person across all departments automatically.</div>
+      <div style="display:flex;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--sand-dim);margin-top:4px">
+        <button class="btn bp" onclick="closeTeam()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISPATCH MODAL (HK + Kitchen) -->
+<div class="ov" id="ovDispatch">
+  <div class="dis-modal">
+    <div class="dis-h" id="disH">
+      <div class="dis-icon" id="disIcon"></div>
+      <div><div class="dis-title" id="disTitle"></div><div class="dis-sub" id="disSub"></div></div>
+    </div>
+    <div class="dis-b">
+      <!-- Manager number — only shown for HK -->
+      <div class="mgr-wrap" id="mgrWrap" style="display:none">
+        <div class="mgr-lbl">📱 Your number (housekeeper sends completion here)</div>
+        <div class="mgr-row">
+          <input class="mgr-input" id="mgrInput" type="tel" placeholder="+27 82 000 0000">
+          <button class="mgr-save" onclick="saveMgrNum()">Save</button>
+        </div>
+        <div class="mgr-saved" id="mgrSaved">✓ Saved</div>
+      </div>
+
+      <div class="dis-info">
+        <div style="font-size:20px" id="disRoomIcon"></div>
+        <div>
+          <div class="dis-room-name" id="disRoomName"></div>
+          <div class="dis-room-det"  id="disRoomDet"></div>
+        </div>
+      </div>
+      <div class="dis-lbl" id="disLabel">Send to staff:</div>
+      <div class="dis-staff" id="disStaff"></div>
+      <div class="dis-foot"><button class="btn bg" onclick="closeDispatch()">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST SETTINGS -->
+<div class="ov" id="ovTasks">
+  <div class="tasks-modal">
+    <div class="tasks-h">
+      <div><div class="tasks-title">HK Checklists</div><div style="font-size:9px;color:rgba(255,255,255,.5);margin-top:2px">Configure &amp; edit tasks sent to housekeeping</div></div>
+      <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closeTaskSettings()">✕</button>
+    </div>
+    <div class="tasks-b">
+
+      <!-- HOSTED URL SECTION -->
+      <div class="chk-url-wrap">
+        <div class="chk-url-header">
+          <div class="chk-url-title">🔗 Hosted Checklist URL</div>
+          <div class="chk-url-status" id="chkUrlStatus"></div>
+        </div>
+        <div class="chk-url-desc">
+          Paste your GitHub Pages URL here (e.g. <code>https://yourname.github.io/tintswalo-checklist/</code>).<br>
+          When set, housekeepers receive a <strong>live interactive checklist link</strong> in their WhatsApp message instead of plain text. When all tasks are ticked they tap one button to notify you.
+        </div>
+        <div class="chk-url-row">
+          <input class="chk-url-input" id="chkUrlInput" type="url" placeholder="https://yourname.github.io/tintswalo-checklist/">
+          <button class="chk-url-save" onclick="saveChkUrl()">Save URL</button>
+        </div>
+        <div class="chk-url-clear-row">
+          <button class="chk-url-clear" id="chkUrlClear" onclick="clearChkUrl()" style="display:none">✕ Remove URL (revert to plain-text checklist)</button>
+        </div>
+      </div>
+
+      <div class="tasks-tab-row">
+        <button class="tasks-tab active" id="tabClean"    onclick="switchTab('clean')">🧹 Cleaning Tasks</button>
+        <button class="tasks-tab"        id="tabTurndown" onclick="switchTab('turndown')">🌙 Turndown Tasks</button>
+      </div>
+      <div id="tasksList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DINNER MENU MODAL -->
+<div class="ov" id="ovMenu">
+  <div class="menu-modal">
+    <div class="menu-h">
+      <div>
+        <div class="menu-title">🍷 Tonight's Dinner Menu</div>
+        <div class="menu-sub">Compose &amp; send to all guests via WhatsApp</div>
+      </div>
+      <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closeMenuModal()">✕</button>
+    </div>
+    <div class="menu-b">
+
+      <!-- DATE & TIME -->
+      <div class="menu-meta-row">
+        <div class="mf" style="flex:1"><label>Date</label><input type="date" id="menuDate"></div>
+        <div class="mf" style="flex:1"><label>Dinner Time</label><input type="time" id="menuTime" value="19:00"></div>
+        <div class="mf" style="flex:2"><label>Dress Code / Note</label><input type="text" id="menuNote" placeholder="e.g. Smart casual"></div>
+      </div>
+
+      <!-- MENU SECTIONS -->
+      <div class="menu-sections" id="menuSections"></div>
+
+      <button class="menu-add-section-btn" onclick="addMenuSection()">+ Add Section</button>
+
+      <!-- HOSTED MENU URL -->
+      <div class="menu-url-wrap" id="menuUrlWrap">
+        <div class="menu-url-header">
+          <div class="menu-url-title">🔗 Hosted Menu URL</div>
+          <div class="menu-url-status" id="menuUrlStatus"></div>
+        </div>
+        <div class="menu-url-desc">
+          Paste your GitHub Pages URL for the menu page (e.g. <code>https://yourname.github.io/tintswalo-menu/</code>).<br>
+          When set, guests receive a beautiful <strong>full-design menu page</strong> link instead of plain WhatsApp text.
+        </div>
+        <div class="menu-url-row">
+          <input class="menu-url-input" id="menuUrlInput" type="url" placeholder="https://yourname.github.io/tintswalo-menu/">
+          <button class="menu-url-save" onclick="saveMenuUrl()">Save</button>
+        </div>
+        <div class="menu-url-clear-row">
+          <button class="menu-url-clear" id="menuUrlClear" onclick="clearMenuUrl()" style="display:none">✕ Remove URL</button>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="menu-preview-wrap">
+        <div class="menu-preview-title" id="menuPreviewTitle">📱 WhatsApp Preview</div>
+        <div class="menu-preview-box" id="menuPreview"></div>
+      </div>
+
+      <!-- GUEST LIST -->
+      <div class="menu-guests-wrap">
+        <div class="menu-guests-title" id="menuGuestsTitle">Send to guests (dinner only):</div>
+        <div class="menu-toggle-row">
+          <label class="tog"><input type="checkbox" id="menuAllGuests" onchange="renderMenuGuests()"><div class="ttr"><div class="tth"></div></div></label>
+          <span style="font-size:10px;font-weight:500;letter-spacing:.1em;margin-left:8px">Send to ALL occupied rooms (not just dinner guests)</span>
+        </div>
+        <div class="menu-guest-list" id="menuGuestList"></div>
+      </div>
+
+      <div class="menu-foot">
+        <button class="btn bg" onclick="closeMenuModal()">Cancel</button>
+        <button class="menu-send-btn" onclick="sendMenuToAll()">🍷 Send Menu to All Guests</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- WEEKLY PLANNER MODAL -->
+<div class="ov" id="ovPlanner">
+  <div class="planner-modal">
+    <div class="planner-h">
+      <div>
+        <div class="planner-title">📅 Weekly Planner</div>
+        <div class="planner-sub">Click a cell to add a booking · Click a booking to edit · Changes sync to room cards instantly</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="planner-week-nav">
+          <button class="planner-week-btn" onclick="plannerWeekOffset(-1)">&#8249;</button>
+          <div class="planner-week-label" id="plannerWeekLabel"></div>
+          <button class="planner-week-btn" onclick="plannerWeekOffset(1)">&#8250;</button>
+        </div>
+        <button class="planner-today-btn" onclick="plannerGoToday()">Today</button>
+        <button class="planner-today-btn" style="background:rgba(77,144,96,.2);border-color:rgba(77,144,96,.4);color:#8de0a0" onclick="openImportModal()">⬆ Import Excel</button>
+        <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closePlanner()">✕</button>
+      </div>
+    </div>
+    <div class="planner-body">
+      <div class="planner-legend">
+        <div class="pl-item"><div class="pl-swatch" style="background:rgba(45,132,168,.25);border:1px solid rgba(45,132,168,.5)"></div>Occupied</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:rgba(176,64,48,.18);border:1px solid rgba(176,64,48,.4)"></div>Checking Out</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--sand-dim);border:1px solid var(--sand-deep)"></div>Vacant</div>
+        <div style="font-size:9px;color:var(--muted);margin-left:auto">Click empty cell to add booking · Click booking to edit</div>
+      </div>
+      <div class="planner-grid" id="plannerGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXCEL IMPORT MODAL -->
+<div class="ov" id="ovImport">
+  <div class="import-modal">
+    <div class="import-h">
+      <div>
+        <div class="import-title">⬆ Import Reservations from Excel</div>
+        <div class="import-sub">Drag &amp; drop your spreadsheet or click to browse</div>
+      </div>
+      <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closeImportModal()">✕</button>
+    </div>
+    <div class="import-b">
+
+      <!-- DROP ZONE -->
+      <div class="import-drop" id="importDrop"
+        ondrop="handleDrop(event)" ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')" onclick="document.getElementById('importFile').click()">
+        <div class="import-drop-icon">📊</div>
+        <div class="import-drop-title">Drop your Excel file here</div>
+        <div class="import-drop-sub">or click to browse · .xlsx and .xls supported</div>
+        <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileSelect(event)">
+      </div>
+
+      <!-- FORMAT GUIDE -->
+      <div class="import-guide">
+        <div class="import-guide-title">📋 Required spreadsheet format:</div>
+        <div class="import-guide-table">
+          <div class="igt-header">
+            <span>Room</span><span>Guest Name</span><span>Pax</span><span>Check-in</span><span>Check-out</span><span>Nationality</span><span>Phone</span><span>Breakfast</span><span>Dinner</span><span>Notes</span>
+          </div>
+          <div class="igt-row example">
+            <span>Drommedaris</span><span>Mr & Mrs Smith</span><span>2</span><span>2026-03-28</span><span>2026-03-31</span><span>British</span><span>+27821234567</span><span>Yes</span><span>No</span><span>Honeymoon</span>
+          </div>
+        </div>
+        <div class="import-guide-notes">
+          <strong>✓ Tintswalo Day Sheet format supported</strong> — drop your monthly day sheet directly and all bookings will be extracted automatically across all sheets.<br><br>
+          Or use a flat table with headers (any order):<br>
+          • Dates as YYYY-MM-DD or DD/MM/YYYY &nbsp;·&nbsp; Room names must match: <em>Drommedaris, Water Witch, Mayflower, Mary Rose, Endeavour, Grosvenor, Bounty, Cutty Sark, Victory</em><br>
+          • Breakfast / Dinner: Yes/No, Y/N, TRUE/FALSE, or 1/0
+        </div>
+        <button class="import-template-btn" onclick="downloadTemplate()">⬇ Download Template</button>
+      </div>
+
+      <!-- PREVIEW TABLE -->
+      <div class="import-preview-wrap" id="importPreviewWrap" style="display:none">
+        <div class="import-preview-title" id="importPreviewTitle"></div>
+        <div class="import-preview-scroll">
+          <table class="import-preview-table" id="importPreviewTable"></table>
+        </div>
+        <div class="import-errors" id="importErrors" style="display:none"></div>
+      </div>
+
+      <div class="import-foot">
+        <button class="btn bg" onclick="closeImportModal()">Cancel</button>
+        <button class="btn bp" id="importConfirmBtn" onclick="confirmImport()" style="display:none">✓ Import All Bookings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING EDIT MODAL -->
+<div class="ov" id="ovBooking">
+  <div class="booking-modal">
+    <div class="booking-h">
+      <div>
+        <div class="booking-h-title" id="bookingTitle">Add Booking</div>
+        <div class="booking-h-room" id="bookingRoom"></div>
+      </div>
+      <button class="mx" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)" onclick="closeBooking()">✕</button>
+    </div>
+    <div class="booking-b">
+      <div class="booking-grid">
+        <div class="mf" style="grid-column:span 2"><label>Guest Name / Party</label><input type="text" id="bkName" placeholder="e.g. Mr & Mrs Smith"></div>
+        <div class="mf"><label>Number of Guests</label><input type="number" id="bkPax" value="2" min="1" max="12"></div>
+        <div class="mf"><label>Nationality</label><input type="text" id="bkNat" placeholder="e.g. South African"></div>
+        <div class="mf"><label>Check-in Date</label><input type="date" id="bkCiDate"></div>
+        <div class="mf"><label>Check-in Time</label><input type="time" id="bkCiTime" value="14:00"></div>
+        <div class="mf"><label>Check-out Date</label><input type="date" id="bkCoDate"></div>
+        <div class="mf"><label>Check-out Time</label><input type="time" id="bkCoTime" value="11:00"></div>
+        <div class="mf" style="grid-column:span 2"><label>Guest WhatsApp Number</label><input type="tel" id="bkPhone" placeholder="+27 82 000 0000"></div>
+      </div>
+      <div class="ms" style="margin-bottom:10px">
+        <div class="mst">Dining</div>
+        <div class="togr"><span class="togl">Breakfast</span><label class="tog"><input type="checkbox" id="bkBk"><div class="ttr"><div class="tth"></div></div></label></div>
+        <div class="togr"><span class="togl">Dinner</span><label class="tog"><input type="checkbox" id="bkDn"><div class="ttr"><div class="tth"></div></div></label></div>
+      </div>
+      <div class="mf" style="margin-bottom:0"><label>Notes</label><textarea class="na" id="bkNotes" placeholder="Allergies, special requests..." style="height:48px"></textarea></div>
+      <div class="booking-foot">
+        <button class="btn bd" id="bkDeleteBtn" onclick="deleteBooking()" style="display:none">Delete Booking</button>
+        <div style="display:flex;gap:8px;margin-left:auto">
+          <button class="btn bg" onclick="closeBooking()">Cancel</button>
+          <button class="btn bp" onclick="saveBooking()">Save Booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────
+const TEAMS={
+  hk: {label:'Housekeeping',em:'🧹',color:'#25D366',dark:'#128C7E',bg:'rgba(37,211,102,'},
+  kt: {label:'Kitchen',     em:'🍽️',color:'#b05a00',dark:'#8a3f00',bg:'rgba(176,90,0,'},
+  svc:{label:'Service',     em:'🛎️',color:'#1e5f7a',dark:'#145070',bg:'rgba(30,95,122,'},
+  mnt:{label:'Maintenance', em:'🔧',color:'#7a4a1e',dark:'#5a3010',bg:'rgba(122,74,30,'},
+  sec:{label:'Security',    em:'🛡️',color:'#3a3a6b',dark:'#252550',bg:'rgba(58,58,107,'},
+  all:{label:'All Staff',   em:'📢',color:'#4a1e6b',dark:'#350f50',bg:'rgba(74,30,107,'},
+};
+const TEAM_KEYS=['hk','kt','svc','mnt','sec','all'];
+const ROOMS=['Drommedaris','Water Witch','Mayflower','Mary Rose','Endeavour','Grosvenor','Bounty','Cutty Sark','Victory'];
+const blank=()=>({status:'vacant',guest:{name:'',pax:1,nationality:'',phone:''},checkin:{date:'',time:'14:00'},checkout:{date:'',time:'11:00'},breakfast:false,dinner:false,hk:{cleaned:false,turndown:false},notes:''});
+
+const DEFAULT_CLEAN=[
+  {section:'Entrance & General',tasks:['Remove rubbish & replace bin liners','Vacuum / sweep all floors','Mop hard floors','Dust all surfaces & décor','Check door & lock']},
+  {section:'Bathroom',tasks:['Scrub & disinfect toilet','Clean & polish basin and taps','Clean & polish shower / bath','Wipe mirrors streak-free','Replace towels with fresh','Restock toiletries & amenities','Empty bathroom bin']},
+  {section:'Bedroom',tasks:['Strip & remake bed with fresh linen','Fluff and position all pillows','Dust bedside tables & lamps','Restock tea & coffee station','Check all lights working','Place welcome card / amenities']},
+  {section:'Final Check',tasks:['Clean windows','Open curtains / adjust blinds','Set correct room temperature','Check & restock minibar','Final walk-through','Report any maintenance issues']}
+];
+const DEFAULT_TURNDOWN=[
+  {section:'Bedroom Prep',tasks:['Turn down bed on guest side(s)','Place chocolates / treat on pillow','Fold back duvet neatly','Close curtains / blinds','Set bedside lamp to low']},
+  {section:'Bathroom',tasks:['Replace used towels with fresh','Fold towels neatly','Top up toiletries','Wipe basin & taps','Empty bin if needed']},
+  {section:'Room',tasks:['Clear & tidy any dishes / glasses','Empty main bin if needed','Straighten cushions & décor','Check & restock minibar']},
+  {section:'Final Check',tasks:['All lights correct','Temperature comfortable','No maintenance issues','Room locked after leaving']}
+];
+
+let rooms={}, teams={hk:[],kt:[],svc:[],mnt:[],sec:[],all:[]};
+let cleanTasks=[], turndownTasks=[], mgrNumber='', chkUrl='', curTeam='hk', curTaskTab='clean';
+
+function load(){
+  const r=localStorage.getItem('tb_rooms');
+  if(r){rooms=JSON.parse(r);ROOMS.forEach(n=>{if(!rooms[n])rooms[n]=blank();})}
+  else{ROOMS.forEach(n=>rooms[n]=blank());seedDemo();}
+  TEAM_KEYS.forEach(k=>{const s=localStorage.getItem(`tb_team_${k}`);if(s)teams[k]=JSON.parse(s);});
+  const ct=localStorage.getItem('tb_ctasks');cleanTasks=ct?JSON.parse(ct):JSON.parse(JSON.stringify(DEFAULT_CLEAN));
+  const tt=localStorage.getItem('tb_ttasks');turndownTasks=tt?JSON.parse(tt):JSON.parse(JSON.stringify(DEFAULT_TURNDOWN));
+  mgrNumber=localStorage.getItem('tb_mgr')||'';
+  chkUrl=localStorage.getItem('tb_chk_url')||'';
+  save();
+}
+function save(){localStorage.setItem('tb_rooms',JSON.stringify(rooms));}
+function saveTeam(k){localStorage.setItem(`tb_team_${k}`,JSON.stringify(teams[k]));}
+function saveTasks(){localStorage.setItem('tb_ctasks',JSON.stringify(cleanTasks));localStorage.setItem('tb_ttasks',JSON.stringify(turndownTasks));}
+function saveMgrNum(){mgrNumber=document.getElementById('mgrInput').value.trim();localStorage.setItem('tb_mgr',mgrNumber);document.getElementById('mgrSaved').style.display='block';toast('Your number saved ✓');}
+
+function getAllStaff(){
+  const seen=new Set(),all=[];
+  ['hk','kt','svc','mnt','sec'].forEach(k=>{teams[k].forEach(s=>{const key=s.phone.replace(/\D/g,'');if(!seen.has(key)){seen.add(key);all.push({...s,_team:TEAMS[k].label});}});});
+  return all;
+}
+
+function seedDemo(){
+  const fmt=d=>d.toISOString().split('T')[0];
+  const t=new Date(),tom=new Date(t),yest=new Date(t),two=new Date(t);
+  tom.setDate(t.getDate()+1);yest.setDate(t.getDate()-1);two.setDate(t.getDate()+2);
+  rooms['Drommedaris']={status:'occupied',guest:{name:'Mr & Mrs Van den Berg',pax:2,nationality:'South African'},checkin:{date:fmt(yest),time:'14:00'},checkout:{date:fmt(tom),time:'11:00'},breakfast:true,dinner:false,hk:{cleaned:true,turndown:false},notes:'Honeymoon.'};
+  rooms['Water Witch']={status:'occupied',guest:{name:'Dr James Ashford',pax:1,nationality:'British'},checkin:{date:fmt(t),time:'15:30'},checkout:{date:fmt(two),time:'10:00'},breakfast:true,dinner:true,hk:{cleaned:true,turndown:true},notes:''};
+  rooms['Mayflower']={status:'checkout',guest:{name:'The Nakamura Family',pax:4,nationality:'Japanese'},checkin:{date:fmt(yest),time:'14:30'},checkout:{date:fmt(t),time:'11:00'},breakfast:true,dinner:false,hk:{cleaned:false,turndown:false},notes:'Late checkout 12:00.'};
+  rooms['Victory']={status:'occupied',guest:{name:'Capt. Sofia Moreau',pax:2,nationality:'French'},checkin:{date:fmt(t),time:'16:00'},checkout:{date:fmt(two),time:'12:00'},breakfast:false,dinner:true,hk:{cleaned:false,turndown:false},notes:''};
+  rooms['Endeavour']={status:'occupied',guest:{name:'Mr Pieter Botha',pax:1,nationality:'South African'},checkin:{date:fmt(yest),time:'13:00'},checkout:{date:fmt(tom),time:'11:00'},breakfast:true,dinner:true,hk:{cleaned:true,turndown:true},notes:'Allergy: nuts.'};
+}
+
+let _tt;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),3200);}
+
+function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('navdate').textContent=n.toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+}
+setInterval(tick,1000);tick();
+
+// ── BANNERS ───────────────────────────────────────────────────────────────
+function renderBanners(){
+  document.getElementById('bannersGrid').innerHTML=TEAM_KEYS.map(k=>{
+    const cfg=TEAMS[k];
+    const list=k==='all'?getAllStaff():teams[k];
+    const chips=list.length?list.map(s=>`<span class="chip" style="background:${cfg.bg}.1);border:1px solid ${cfg.bg}.22);color:${cfg.dark}">${s.name}</span>`).join(''):'<span class="chip-none">No staff — click Edit</span>';
+    return`<div class="banner" style="background:linear-gradient(135deg,${cfg.bg}.06),${cfg.bg}.03));border-color:${cfg.bg}.16)">
+      <div class="banner-left">
+        <div class="b-icon" style="background:${cfg.color}">${cfg.em}</div>
+        <div style="min-width:0"><div class="b-title" style="color:${cfg.dark}">${cfg.label}</div><div class="chips">${chips}</div></div>
+      </div>
+      <button class="b-edit" style="border-color:${cfg.bg}.28);color:${cfg.dark}" onclick="openTeam('${k}')"
+        onmouseover="this.style.background='${cfg.bg}.1)'" onmouseout="this.style.background='none'">✏ Edit</button>
+    </div>`;
+  }).join('');
+}
+
+function renderStats(){
+  const v=Object.values(rooms);
+  document.getElementById('statsBar').innerHTML=[
+    {n:v.filter(r=>r.status!=='vacant').length,l:'Occupied'},
+    {n:v.filter(r=>r.status==='vacant').length,l:'Vacant'},
+    {n:v.filter(r=>r.breakfast&&r.status!=='vacant').length,l:'Breakfast'},
+    {n:v.filter(r=>r.dinner&&r.status!=='vacant').length,l:'Dinner'},
+    {n:v.filter(r=>r.hk&&r.hk.cleaned).length,l:'HK Cleaned'}
+  ].map(s=>`<div class="stat"><div class="stat-n">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
+}
+
+const sc=s=>s==='occupied'?'s-o':s==='vacant'?'s-v':'s-c';
+const bc=s=>s==='occupied'?'b-o':s==='vacant'?'b-v':'b-c';
+const sl=s=>s==='occupied'?'Occupied':s==='vacant'?'Vacant':'Checking Out';
+const fd=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short'}):'—';
+const esc=s=>s.replace(/\\/g,'\\\\').replace(/'/g,'\\x27');
+
+function renderRooms(){
+  document.getElementById('roomsGrid').innerHTML=ROOMS.map(name=>{
+    const r=rooms[name],sn=esc(name);
+    if(r.status==='vacant')return`<div class="rc vac" onclick="openRoom('${sn}')"><div class="stripe s-v"></div><div class="rh"><div class="rn">${name}</div><div class="badge b-v">Vacant</div></div><div class="vac-body"><div class="vac-icon">🐧</div><div class="vac-txt">Awaiting guests</div></div></div>`;
+    const cd=r.hk&&r.hk.cleaned,td=r.hk&&r.hk.turndown,bk=r.breakfast,dn=r.dinner;
+    return`<div class="rc" onclick="openRoom('${sn}')">
+      <div class="stripe ${sc(r.status)}"></div>
+      <div class="rh"><div class="rn">${name}</div><div class="badge ${bc(r.status)}">${sl(r.status)}</div></div>
+      <div class="rb">
+        <div class="gn">${r.guest.name||'Guest'}</div>
+        <div class="gs">${r.guest.pax} ${r.guest.pax===1?'Guest':'Guests'}${r.guest.nationality?' · '+r.guest.nationality:''}</div>
+        <div class="tr">
+          <div class="tb"><div class="tl">Check-in</div><div class="tv">${fd(r.checkin.date)} · ${r.checkin.time}</div></div>
+          <div class="tb"><div class="tl">Check-out</div><div class="tv">${fd(r.checkout.date)} · ${r.checkout.time}</div></div>
+        </div>
+        <div class="ng"><div class="ng-lbl">🍽️ Kitchen</div>
+          <div class="ng-row">
+            <div class="ab-split ${bk?'ab-kt-on':'ab-kt-off'}">
+              <button class="ab-toggle" onclick="event.stopPropagation();toggleOnly('${sn}','breakfast')">
+                <span class="ab-icon">${bk?'☕':'○'}</span><span>Breakfast</span>
+              </button>
+              <button class="ab-send" onclick="event.stopPropagation();sendDispatch('${sn}','breakfast')" title="Send WhatsApp">💬</button>
+            </div>
+            <div class="ab-split ${dn?'ab-kt-on':'ab-kt-off'}">
+              <button class="ab-toggle" onclick="event.stopPropagation();toggleOnly('${sn}','dinner')">
+                <span class="ab-icon">${dn?'🌐':'○'}</span><span>Dinner</span>
+              </button>
+              <button class="ab-send" onclick="event.stopPropagation();sendDispatch('${sn}','dinner')" title="Send WhatsApp">💬</button>
+            </div>
+          </div>
+        </div>
+        <div class="ng" style="margin-top:6px"><div class="ng-lbl">🧹 Housekeeping</div>
+          <div class="ng-row">
+            <div class="ab-split ${cd?'ab-done':'ab-pend'}">
+              <button class="ab-toggle" onclick="event.stopPropagation();toggleOnly('${sn}','clean')">
+                <span class="ab-icon">${cd?'✓':'○'}</span><span>Cleaned</span>
+              </button>
+              <button class="ab-send" onclick="event.stopPropagation();sendDispatch('${sn}','clean')" title="Send Checklist">📋</button>
+            </div>
+            <div class="ab-split ${td?'ab-done':'ab-pend'}">
+              <button class="ab-toggle" onclick="event.stopPropagation();toggleOnly('${sn}','turndown')">
+                <span class="ab-icon">${td?'✓':'○'}</span><span>Turndown</span>
+              </button>
+              <button class="ab-send" onclick="event.stopPropagation();sendDispatch('${sn}','turndown')" title="Send Checklist">📋</button>
+            </div>
+          </div>
+        </div>
+      </div></div>`;
+  }).join('');
+}
+
+function renderAll(){renderBanners();renderStats();renderRooms();}
+
+// ── BUILD HK WHATSAPP MESSAGE WITH FULL PLAIN-TEXT CHECKLIST ─────────────
+// This is the KEY fix: the entire checklist is embedded as plain text
+// in the WhatsApp message itself. No links needed — it works natively.
+// When housekeeper ticks all done, they tap the "Notify Manager" link 
+// at the bottom which sends a wa.me message back to the manager.
+function buildHKMessage(roomName, type, guestName, pax, shortLink){
+  const t=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const label=type==='clean'?'Room Clean':'Turndown Service';
+  const em=type==='clean'?'🧹':'🌙';
+  const tasks=type==='clean'?cleanTasks:turndownTasks;
+  const jobId=Date.now().toString();
+
+  // If a hosted URL is configured, send a short link
+  if(chkUrl){
+    const base=chkUrl.replace(/\/$/, '');
+    const mgrPhone=mgrNumber.replace(/\D/g,'');
+    const params=new URLSearchParams({room:roomName,type,guest:guestName,mgr:mgrPhone,jobId});
+    const fullLink=`${base}?${params.toString()}`;
+    const link = shortLink || fullLink; // use shortened if available
+
+    let msg=`🏨 *Tintswalo Boulders*\n\n${em} *${label} Checklist*\n`;
+    msg+=`📍 Room: *${roomName}*\n`;
+    msg+=`👤 Guest: ${guestName}\n`;
+    msg+=`🕐 Time: ${t}\n`;
+    msg+=`${'─'.repeat(28)}\n\n`;
+    msg+=`Tap below to open your checklist, tick off each task, then tap *Notify Manager* when done.\n\n`;
+    msg+=`${link}\n\n`;
+    msg+=`${'─'.repeat(28)}\n`;
+    msg+=`_${tasks.reduce((a,s)=>a+s.tasks.length,0)} tasks · ${label}_`;
+    return {msg, jobId, fullLink};
+  }
+
+  // No URL — plain-text checklist
+  let msg=`🏨 *Tintswalo Boulders*\n\n${em} *${label} Checklist*\n`;
+  msg+=`📍 Room: *${roomName}*\n`;
+  msg+=`👤 Guest: ${guestName}\n`;
+  msg+=`🕐 Time: ${t}\n`;
+  msg+=`${'─'.repeat(28)}\n\n`;
+  let taskNum=1;
+  tasks.forEach(sec=>{
+    msg+=`*${sec.section}*\n`;
+    sec.tasks.forEach(task=>{ msg+=`${taskNum++}. ☐ ${task}\n`; });
+    msg+='\n';
+  });
+  msg+=`${'─'.repeat(28)}\n`;
+  msg+=`✅ *When all tasks are complete, tap below to notify the manager:*\n`;
+  if(mgrNumber){
+    const mgrPhone=mgrNumber.replace(/\D/g,'');
+    const doneMsg=`✅ *Tintswalo Boulders*\n\n${em} *${label} Complete!*\n\nRoom: *${roomName}*\nGuest: ${guestName}\nAll tasks completed ✔\nTime: ${t}`;
+    msg+=`https://wa.me/${mgrPhone}?text=${encodeURIComponent(doneMsg)}`;
+  } else {
+    msg+=`_(Set manager number in dashboard to enable completion link)_`;
+  }
+  return {msg, jobId, fullLink: null};
+}
+
+// ── TOGGLE ONLY (no WhatsApp dispatch) ───────────────────────────────────
+// Called when tapping the left side of a split button — just flips the state
+function toggleOnly(roomName, type) {
+  if (!rooms[roomName].hk) rooms[roomName].hk = {cleaned:false, turndown:false};
+  if      (type==='clean')     rooms[roomName].hk.cleaned   = !rooms[roomName].hk.cleaned;
+  else if (type==='turndown')  rooms[roomName].hk.turndown  = !rooms[roomName].hk.turndown;
+  else if (type==='breakfast') rooms[roomName].breakfast     = !rooms[roomName].breakfast;
+  else if (type==='dinner')    rooms[roomName].dinner        = !rooms[roomName].dinner;
+  save(); renderAll();
+}
+
+// ── SEND DISPATCH (WhatsApp only, no toggle) ──────────────────────────────
+// Called when tapping the 💬/📋 icon on the right side of a split button
+function sendDispatch(roomName, type) {
+  const isHK = type==='clean' || type==='turndown';
+  const isKT = type==='breakfast' || type==='dinner';
+  if (isHK) {
+    const team = teams.hk;
+    if (!team.length) { openTeam('hk'); toast('Add Housekeeping staff first'); return; }
+    openHKDispatch(roomName, type, team);
+  } else if (isKT) {
+    const team = teams.kt;
+    if (!team.length) { openTeam('kt'); toast('Add Kitchen staff first'); return; }
+    openKTDispatch(roomName, type, team);
+  }
+}
+
+// ── HK TRIGGER ────────────────────────────────────────────────────────────
+function triggerHK(roomName,type){
+  const team=teams.hk;
+  if(!team.length){openTeam('hk');toast('Add Housekeeping staff first');return;}
+  openHKDispatch(roomName,type,team);
+}
+
+function openHKDispatch(roomName,type,team){
+  const r=rooms[roomName];
+  const guest=r.guest.name||'Guest';
+  const pax=r.guest.pax||1;
+  const cfg=TEAMS.hk;
+  const label=type==='clean'?'Room Clean':'Turndown Service';
+  const em=type==='clean'?'🧹':'🌙';
+  const taskList=type==='clean'?cleanTasks:turndownTasks;
+  const allTasks=taskList.flatMap(s=>s.tasks);
+
+  document.getElementById('disH').style.background=cfg.dark;
+  document.getElementById('disIcon').textContent=em;
+  document.getElementById('disTitle').textContent=`HK Checklist: ${label}`;
+  document.getElementById('disSub').textContent=`${roomName} · ${guest} · ${allTasks.length} tasks`;
+  document.getElementById('disRoomIcon').textContent=em;
+  document.getElementById('disRoomName').textContent=roomName;
+  document.getElementById('disRoomDet').textContent=`Guest: ${guest} · ${allTasks.length} tasks`;
+  document.getElementById('disLabel').textContent='Send checklist via WhatsApp to:';
+
+  document.getElementById('mgrWrap').style.display='block';
+  document.getElementById('mgrInput').value=mgrNumber;
+  document.getElementById('mgrSaved').style.display=mgrNumber?'block':'none';
+
+  const previewTasks=allTasks.slice(0,5).map((t,n)=>`<div class="dis-task-item"><span class="dis-task-num">${n+1}.</span><span>${t}</span></div>`).join('');
+  const more=allTasks.length>5?`<div class="dis-task-item"><span class="dis-task-num">···</span><span style="color:var(--gold)">${allTasks.length-5} more tasks</span></div>`:'';
+
+  document.getElementById('disStaff').innerHTML=team.map((s,i)=>`
+    <div class="dis-row">
+      <div class="dis-row-top">
+        <div class="dis-row-l">
+          <div class="av" style="background:${cfg.color}">${s.name.charAt(0).toUpperCase()}</div>
+          <div><div class="dis-name">${s.name}</div><div class="dis-phone">${s.phone}</div></div>
+        </div>
+        <button class="dis-chk-wa" id="hkSend_${i}"
+          onclick="sendHKChecklist('${roomName.replace(/'/g,'\\x27')}','${type}','${guest.replace(/'/g,'\\x27')}','${s.phone.replace(/\D/g,'')}',${i})">
+          📋 Send Checklist
+        </button>
+      </div>
+      <div class="dis-tasks-preview">
+        <div class="dis-tasks-preview-title">Tasks in this message (${allTasks.length} total):</div>
+        <div class="dis-tasks-grid">${previewTasks}${more}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('ovDispatch').classList.add('open');
+}
+
+async function sendHKChecklist(roomName, type, guestName, phone, idx){
+  const btn = document.getElementById(`hkSend_${idx}`);
+  btn.textContent = '…';
+  btn.disabled = true;
+
+  // Build message — get the full link first
+  const {msg: plainMsg, fullLink} = buildHKMessage(roomName, type, guestName, 1);
+
+  let finalMsg = plainMsg;
+  if(chkUrl && fullLink){
+    toast('Shortening link…');
+    const shortLink = await shortenUrl(fullLink);
+    finalMsg = buildHKMessage(roomName, type, guestName, 1, shortLink).msg;
+  }
+
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+  btn.textContent = '✓ Sent';
+  btn.classList.add('sent');
+  btn.disabled = false;
+  toast(`Checklist sent`);
+}
+
+// ── KITCHEN TRIGGER ───────────────────────────────────────────────────────
+function triggerKT(roomName,type){
+  const team=teams.kt;
+  if(!team.length){openTeam('kt');toast('Add Kitchen staff first');return;}
+  openKTDispatch(roomName,type,team);
+}
+
+function openKTDispatch(roomName,type,team){
+  const r=rooms[roomName];
+  const guest=r.guest.name||'Guest';
+  const pax=r.guest.pax||1;
+  const cfg=TEAMS.kt;
+  const t=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const em=type==='breakfast'?'☕':'🍽️';
+  const label=type==='breakfast'?'Breakfast Order':'Dinner Reservation';
+  const msg=`🏨 *Tintswalo Boulders*\n\n${em} *${label}*\n\nRoom: *${roomName}*\nGuest: ${guest}\nCovers: ${pax}\nTime: ${t}\n\nThank you ✨`;
+
+  document.getElementById('disH').style.background=cfg.dark;
+  document.getElementById('disIcon').textContent=em;
+  document.getElementById('disTitle').textContent=`Notify: ${label}`;
+  document.getElementById('disSub').textContent=`${roomName} · ${guest}`;
+  document.getElementById('disRoomIcon').textContent=em;
+  document.getElementById('disRoomName').textContent=roomName;
+  document.getElementById('disRoomDet').textContent=`Guest: ${guest} · ${pax} cover${pax>1?'s':''}`;
+  document.getElementById('disLabel').textContent='Send WhatsApp to:';
+  document.getElementById('mgrWrap').style.display='none';
+
+  document.getElementById('disStaff').innerHTML=team.map(s=>`
+    <div class="dis-row">
+      <div class="dis-row-top">
+        <div class="dis-row-l">
+          <div class="av" style="background:${cfg.color}">${s.name.charAt(0).toUpperCase()}</div>
+          <div><div class="dis-name">${s.name}</div><div class="dis-phone">${s.phone}</div></div>
+        </div>
+        <a class="dis-kt-link" href="https://wa.me/${s.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}"
+           target="_blank" rel="noopener" style="background:${cfg.color}"
+           onclick="this.innerHTML='✓ Sent';this.classList.add('sent');toast('WhatsApp opened')">
+          💬 Send
+        </a>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('ovDispatch').classList.add('open');
+}
+
+function closeDispatch(){document.getElementById('ovDispatch').classList.remove('open');}
+
+// ── TASK SETTINGS ─────────────────────────────────────────────────────────
+function openTaskSettings(){
+  curTaskTab='clean';
+  document.getElementById('tabClean').classList.add('active');
+  document.getElementById('tabTurndown').classList.remove('active');
+  // Populate URL field
+  document.getElementById('chkUrlInput').value=chkUrl;
+  updateChkUrlStatus();
+  renderTasksList();
+  document.getElementById('ovTasks').classList.add('open');
+}
+
+function updateChkUrlStatus(){
+  const el=document.getElementById('chkUrlStatus');
+  const clearBtn=document.getElementById('chkUrlClear');
+  if(chkUrl){
+    el.textContent='✓ URL Set — Interactive mode active';
+    el.className='chk-url-status set';
+    clearBtn.style.display='inline';
+  } else {
+    el.textContent='Not set — plain text mode';
+    el.className='chk-url-status unset';
+    clearBtn.style.display='none';
+  }
+}
+
+function saveChkUrl(){
+  const val=document.getElementById('chkUrlInput').value.trim();
+  if(val && !val.startsWith('http')){toast('Please enter a valid URL starting with https://');return;}
+  chkUrl=val;
+  localStorage.setItem('tb_chk_url',chkUrl);
+  updateChkUrlStatus();
+  toast(chkUrl ? '✓ Checklist URL saved — interactive mode enabled' : 'URL cleared');
+  // Update legend hint
+  document.getElementById('chkHint').textContent = chkUrl
+    ? '📋 Interactive checklist link sent via WhatsApp · Staff tap ✅ when done'
+    : '📱 HK checklist sent as WhatsApp message · Staff reply ✅ when done';
+}
+
+function clearChkUrl(){
+  chkUrl='';
+  localStorage.removeItem('tb_chk_url');
+  document.getElementById('chkUrlInput').value='';
+  updateChkUrlStatus();
+  toast('Checklist URL removed — reverted to plain text mode');
+  document.getElementById('chkHint').textContent='📱 HK checklist sent as WhatsApp message · Staff reply ✅ when done';
+}
+function closeTaskSettings(){document.getElementById('ovTasks').classList.remove('open');}
+function switchTab(tab){curTaskTab=tab;document.getElementById('tabClean').classList.toggle('active',tab==='clean');document.getElementById('tabTurndown').classList.toggle('active',tab==='turndown');renderTasksList();}
+
+function renderTasksList(){
+  const list=curTaskTab==='clean'?cleanTasks:turndownTasks;
+  document.getElementById('tasksList').innerHTML=list.map((sec,si)=>`
+    <div class="task-section">
+      <div class="task-sec-title">${sec.section}</div>
+      ${sec.tasks.map((task,ti)=>`<div class="task-row"><div class="task-row-text">${task}</div><button class="task-row-del" onclick="delTask(${si},${ti})">✕</button></div>`).join('')}
+      <div class="add-task-row">
+        <input class="add-task-input" id="nt_${si}" placeholder="Add task..." onkeydown="if(event.key==='Enter')addTask(${si})">
+        <button class="add-task-btn" onclick="addTask(${si})">+ Add</button>
+      </div>
+    </div>`).join('');
+}
+
+function addTask(si){const list=curTaskTab==='clean'?cleanTasks:turndownTasks;const inp=document.getElementById(`nt_${si}`);const v=inp.value.trim();if(!v)return;list[si].tasks.push(v);saveTasks();inp.value='';renderTasksList();toast('Task added');}
+function delTask(si,ti){const list=curTaskTab==='clean'?cleanTasks:turndownTasks;list[si].tasks.splice(ti,1);saveTasks();renderTasksList();}
+
+// ── TEAM SETTINGS ─────────────────────────────────────────────────────────
+function openTeam(k){
+  curTeam=k;const cfg=TEAMS[k];const isAll=k==='all';
+  document.getElementById('tmH').style.background=cfg.dark;
+  document.getElementById('tmH').style.borderBottomColor=cfg.color;
+  document.getElementById('tmTitle').textContent=cfg.label+' Team';
+  document.getElementById('tmSub').textContent=isAll?'All staff across every department':'Manage staff & WhatsApp numbers';
+  document.getElementById('addForm').style.display=isAll?'none':'block';
+  document.getElementById('allNote').style.display=isAll?'block':'none';
+  document.getElementById('addForm').style.background=cfg.bg+'.05)';
+  document.getElementById('addForm').style.borderColor=cfg.bg+'.28)';
+  document.getElementById('addBtn').style.background=cfg.color;
+  document.getElementById('addBtn').innerHTML=`${cfg.em} Add to ${cfg.label} Team`;
+  document.getElementById('aName').value='';document.getElementById('aPhone').value='';
+  renderStaffList();document.getElementById('ovTeam').classList.add('open');
+}
+function closeTeam(){document.getElementById('ovTeam').classList.remove('open');renderAll();}
+
+function renderStaffList(){
+  const k=curTeam,cfg=TEAMS[k];
+  const list=k==='all'?getAllStaff():teams[k];
+  document.getElementById('staffList').innerHTML=list.length?list.map((s,i)=>`
+    <div class="si">
+      <div class="av" style="background:${cfg.color}">${s.name.charAt(0).toUpperCase()}</div>
+      <div class="si-info"><div class="si-name">${s.name}${s._team?` <span style="font-size:9px;color:var(--muted)">(${s._team})</span>`:''}</div><div class="si-ph">${s.phone}</div></div>
+      ${k!=='all'?`<button class="sdel" onclick="delStaff(${i})">✕</button>`:''}
+    </div>`).join(''):'<div class="empty-s">No staff added yet</div>';
+}
+
+function addStaff(){
+  const name=document.getElementById('aName').value.trim(),phone=document.getElementById('aPhone').value.trim();
+  if(!name||!phone){toast('Enter both name and number');return;}
+  teams[curTeam].push({name,phone});saveTeam(curTeam);renderStaffList();
+  document.getElementById('aName').value='';document.getElementById('aPhone').value='';
+  toast(`${name} added`);
+}
+function delStaff(i){const n=teams[curTeam][i].name;teams[curTeam].splice(i,1);saveTeam(curTeam);renderStaffList();toast(`${n} removed`);}
+
+// ── ROOM MODAL ────────────────────────────────────────────────────────────
+function openRoom(name){
+  const r=rooms[name];
+  document.getElementById('mTitle').textContent=name;
+  document.getElementById('mStripe').className='mtop '+sc(r.status);
+  const gn=(r.guest&&r.guest.name||'').replace(/"/g,'&quot;');
+  document.getElementById('mBody').innerHTML=`
+    <div class="ms"><div class="mst">Room Status</div>
+      <div class="mf"><label>Status</label>
+        <select id="mSt" onchange="onStC(this.value)">
+          <option value="occupied" ${r.status==='occupied'?'selected':''}>Occupied</option>
+          <option value="vacant"   ${r.status==='vacant'?'selected':''}>Vacant</option>
+          <option value="checkout" ${r.status==='checkout'?'selected':''}>Checking Out</option>
+        </select></div></div>
+    <div id="gSec" style="${r.status==='vacant'?'display:none':''}">
+      <div class="ms"><div class="mst">Guest Details</div>
+        <div class="mg">
+          <div class="mf" style="grid-column:span 2"><label>Name</label><input type="text" id="mNm" value="${gn}" placeholder="e.g. Mr & Mrs Smith"></div>
+          <div class="mf"><label>Guests</label><input type="number" id="mPx" value="${r.guest&&r.guest.pax||1}" min="1" max="12"></div>
+          <div class="mf"><label>Nationality</label><input type="text" id="mNt" value="${r.guest&&r.guest.nationality||''}" placeholder="South African"></div>
+          <div class="mf" style="grid-column:span 2"><label>Guest WhatsApp Number</label><input type="tel" id="mGph" value="${r.guest&&r.guest.phone||''}" placeholder="+27 82 000 0000"></div>
+        </div></div>
+      <div class="ms"><div class="mst">Check-in / Check-out</div>
+        <div class="mg">
+          <div class="mf"><label>Check-in Date</label><input type="date" id="mCiD" value="${r.checkin&&r.checkin.date||''}"></div>
+          <div class="mf"><label>Check-in Time</label><input type="time" id="mCiT" value="${r.checkin&&r.checkin.time||'14:00'}"></div>
+          <div class="mf"><label>Check-out Date</label><input type="date" id="mCoD" value="${r.checkout&&r.checkout.date||''}"></div>
+          <div class="mf"><label>Check-out Time</label><input type="time" id="mCoT" value="${r.checkout&&r.checkout.time||'11:00'}"></div>
+        </div></div>
+      <div class="ms"><div class="mst">Dining</div>
+        <div class="togr"><span class="togl">Breakfast</span><label class="tog"><input type="checkbox" id="mBk" ${r.breakfast?'checked':''}><div class="ttr"><div class="tth"></div></div></label></div>
+        <div class="togr"><span class="togl">Dinner</span><label class="tog"><input type="checkbox" id="mDn" ${r.dinner?'checked':''}><div class="ttr"><div class="tth"></div></div></label></div>
+      </div>
+      <div class="ms"><div class="mst">Housekeeping</div>
+        <div class="togr"><span class="togl">Cleaned</span><label class="tog"><input type="checkbox" id="mCl" ${r.hk&&r.hk.cleaned?'checked':''}><div class="ttr"><div class="tth"></div></div></label></div>
+        <div class="togr"><span class="togl">Turndown</span><label class="tog"><input type="checkbox" id="mTd" ${r.hk&&r.hk.turndown?'checked':''}><div class="ttr"><div class="tth"></div></div></label></div>
+      </div>
+      <div class="ms"><div class="mst">Notes</div>
+        <textarea class="na" id="mNo" placeholder="Allergies, requests...">${r.notes||''}</textarea>
+      </div>
+    </div>
+    <div class="btr">
+      <button class="btn bd" onclick="clearRm('${esc(name)}')">Clear Room</button>
+      <button class="btn bg" onclick="closeRoom()">Cancel</button>
+      <button class="btn bp" onclick="saveRm('${esc(name)}')">Save</button>
+    </div>`;
+  document.getElementById('ovRoom').classList.add('open');
+}
+
+function onStC(v){document.getElementById('gSec').style.display=v==='vacant'?'none':''}
+function saveRm(name){
+  const st=document.getElementById('mSt').value;
+  rooms[name]=st==='vacant'?blank():{
+    status:st,
+    guest:{name:document.getElementById('mNm')?.value||'',pax:parseInt(document.getElementById('mPx')?.value)||1,nationality:document.getElementById('mNt')?.value||'',phone:document.getElementById('mGph')?.value||''},
+    checkin:{date:document.getElementById('mCiD')?.value||'',time:document.getElementById('mCiT')?.value||'14:00'},
+    checkout:{date:document.getElementById('mCoD')?.value||'',time:document.getElementById('mCoT')?.value||'11:00'},
+    breakfast:document.getElementById('mBk')?.checked||false,
+    dinner:document.getElementById('mDn')?.checked||false,
+    hk:{cleaned:document.getElementById('mCl')?.checked||false,turndown:document.getElementById('mTd')?.checked||false},
+    notes:document.getElementById('mNo')?.value||''
+  };
+  save();renderAll();closeRoom();
+}
+function clearRm(name){if(confirm(`Clear ${name}?`)){rooms[name]=blank();save();renderAll();closeRoom();}}
+function closeRoom(){document.getElementById('ovRoom').classList.remove('open');}
+
+['ovRoom','ovTeam','ovDispatch','ovTasks','ovMenu','ovPlanner','ovBooking','ovImport'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{
+    if(e.target!==document.getElementById(id))return;
+    if(id==='ovRoom')closeRoom();else if(id==='ovTeam')closeTeam();else if(id==='ovDispatch')closeDispatch();else if(id==='ovMenu')closeMenuModal();else if(id==='ovPlanner')closePlanner();else if(id==='ovBooking')closeBooking();else if(id==='ovImport')closeImportModal();else closeTaskSettings();
+  });
+});
+
+// ── DINNER MENU ───────────────────────────────────────────────────────────
+let menuSections = [];
+let savedMenu = null;
+let menuUrl = '';
+
+const DEFAULT_MENU_SECTIONS = [
+  { name: 'Starters',     items: [{ name: '', desc: '' }] },
+  { name: 'Mains',        items: [{ name: '', desc: '' }] },
+  { name: 'Desserts',     items: [{ name: '', desc: '' }] },
+];
+
+function openMenuModal() {
+  // Load saved menu or default
+  const saved = localStorage.getItem('tb_menu');
+  menuSections = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MENU_SECTIONS));
+  menuUrl = localStorage.getItem('tb_menu_url') || '';
+
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('menuDate').value = today;
+  document.getElementById('menuTime').value = '19:00';
+  document.getElementById('menuNote').value = '';
+  document.getElementById('menuAllGuests').checked = false;
+
+  // Populate URL field
+  document.getElementById('menuUrlInput').value = menuUrl;
+  updateMenuUrlStatus();
+
+  renderMenuSections();
+  renderMenuGuests();
+  updateMenuPreview();
+  document.getElementById('ovMenu').classList.add('open');
+}
+
+function updateMenuUrlStatus(){
+  const el = document.getElementById('menuUrlStatus');
+  const clearBtn = document.getElementById('menuUrlClear');
+  if(menuUrl){
+    el.textContent = '✓ Beautiful menu mode active';
+    el.className = 'menu-url-status set';
+    clearBtn.style.display = 'inline';
+  } else {
+    el.textContent = 'Not set — plain WhatsApp text';
+    el.className = 'menu-url-status unset';
+    clearBtn.style.display = 'none';
+  }
+  // Update preview title
+  const pt = document.getElementById('menuPreviewTitle');
+  if(pt) pt.textContent = menuUrl ? '🔗 WhatsApp Message Preview (with menu link)' : '📱 WhatsApp Preview (plain text)';
+}
+
+function saveMenuUrl(){
+  const val = document.getElementById('menuUrlInput').value.trim();
+  if(val && !val.startsWith('http')){ toast('Please enter a valid URL starting with https://'); return; }
+  menuUrl = val;
+  localStorage.setItem('tb_menu_url', menuUrl);
+  updateMenuUrlStatus();
+  updateMenuPreview();
+  toast(menuUrl ? '✓ Menu URL saved — beautiful menu mode enabled' : 'URL cleared');
+}
+
+function clearMenuUrl(){
+  menuUrl = '';
+  localStorage.removeItem('tb_menu_url');
+  document.getElementById('menuUrlInput').value = '';
+  updateMenuUrlStatus();
+  updateMenuPreview();
+  toast('Menu URL removed — reverted to plain text mode');
+}
+
+function closeMenuModal() {
+  document.getElementById('ovMenu').classList.remove('open');
+}
+
+function renderMenuSections() {
+  document.getElementById('menuSections').innerHTML = menuSections.map((sec, si) => `
+    <div class="menu-section">
+      <div class="menu-section-head">
+        <input class="menu-section-name" value="${sec.name}" placeholder="e.g. Starters"
+          oninput="menuSections[${si}].name=this.value;updateMenuPreview()">
+        <button class="menu-section-del" onclick="delMenuSection(${si})">✕</button>
+      </div>
+      <div class="menu-items">
+        ${sec.items.map((item, ii) => `
+          <div class="menu-item-row">
+            <input class="menu-item-name" value="${item.name}" placeholder="Dish name"
+              oninput="menuSections[${si}].items[${ii}].name=this.value;updateMenuPreview()">
+            <input class="menu-item-desc" value="${item.desc}" placeholder="Description (optional)"
+              oninput="menuSections[${si}].items[${ii}].desc=this.value;updateMenuPreview()">
+            <button class="menu-item-del" onclick="delMenuItem(${si},${ii})">✕</button>
+          </div>`).join('')}
+        <button class="menu-add-item-btn" onclick="addMenuItem(${si})">+ Add Dish</button>
+      </div>
+    </div>`).join('');
+}
+
+function addMenuSection() {
+  menuSections.push({ name: 'New Section', items: [{ name: '', desc: '' }] });
+  renderMenuSections();
+  updateMenuPreview();
+}
+
+function delMenuSection(si) {
+  menuSections.splice(si, 1);
+  renderMenuSections();
+  updateMenuPreview();
+}
+
+function addMenuItem(si) {
+  menuSections[si].items.push({ name: '', desc: '' });
+  renderMenuSections();
+}
+
+function delMenuItem(si, ii) {
+  menuSections[si].items.splice(ii, 1);
+  renderMenuSections();
+  updateMenuPreview();
+}
+
+// ── BUILD LONG MENU URL ───────────────────────────────────────────────────
+function buildMenuUrl(){
+  if(!menuUrl) return null;
+  const date = document.getElementById('menuDate').value;
+  const time = document.getElementById('menuTime').value || '19:00';
+  const note = document.getElementById('menuNote').value.trim();
+  const base = menuUrl.replace(/\/$/, '');
+  const params = new URLSearchParams({
+    date, time, note,
+    menu: JSON.stringify(menuSections.map(s => ({name:s.name, items:s.items||[]})))
+  });
+  return base + '?' + params.toString();
+}
+
+// ── SHORTEN URL VIA TINYURL ───────────────────────────────────────────────
+async function shortenUrl(longUrl){
+  try {
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    if(res.ok){
+      const short = await res.text();
+      if(short.startsWith('http')) return short.trim();
+    }
+  } catch(e){}
+  return longUrl; // fallback to full URL if shortening fails
+}
+
+// ── BUILD MESSAGE (sync — uses placeholder if URL mode) ───────────────────
+function buildMenuMessage(shortLink) {
+  const date = document.getElementById('menuDate').value;
+  const time = document.getElementById('menuTime').value || '19:00';
+  const note = document.getElementById('menuNote').value.trim();
+
+  const dateStr = date
+    ? new Date(date + 'T00:00:00').toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' })
+    : new Date().toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  if(menuUrl){
+    const link = shortLink || '(generating link…)';
+    let msg = `🏨 *Tintswalo Boulders*\n\n`;
+    msg += `🍷 *Tonight's Dinner Menu*\n`;
+    msg += `📅 ${dateStr}\n`;
+    msg += `🕖 Served at ${time}\n`;
+    if(note) msg += `👔 ${note}\n`;
+    msg += `\n`;
+    msg += `View tonight's menu:\n`;
+    msg += `${link}\n\n`;
+    msg += `_We look forward to serving you this evening._`;
+    return msg;
+  }
+
+  // Plain text fallback
+  let msg = `🏨 *Tintswalo Boulders*\n\n`;
+  msg += `🍷 *Tonight's Dinner Menu*\n`;
+  msg += `📅 ${dateStr}\n`;
+  msg += `🕖 Dinner served at ${time}\n`;
+  if (note) msg += `👔 ${note}\n`;
+  msg += `${'─'.repeat(30)}\n\n`;
+  menuSections.forEach(sec => {
+    const dishes = sec.items ? sec.items.filter(i => i.name && i.name.trim()) : [];
+    if (!dishes.length) return;
+    msg += `*${sec.name}*\n`;
+    dishes.forEach(item => {
+      msg += `• *${item.name}*`;
+      if (item.desc && item.desc.trim()) msg += `\n  _${item.desc}_`;
+      msg += `\n`;
+    });
+    msg += `\n`;
+  });
+  msg += `${'─'.repeat(30)}\n`;
+  msg += `We look forward to serving you this evening.\n`;
+  msg += `_Please inform us of any dietary requirements._\n\n`;
+  msg += `🌿 *Bon appétit!*`;
+  return msg;
+}
+
+function updateMenuPreview() {
+  document.getElementById('menuPreview').textContent = buildMenuMessage();
+}
+
+function renderMenuGuests() {
+  const allGuests = document.getElementById('menuAllGuests').checked;
+  const eligible = ROOMS
+    .filter(name => {
+      const r = rooms[name];
+      return r.status !== 'vacant' && (allGuests || r.dinner);
+    })
+    .map(name => ({ name, r: rooms[name] }));
+
+  document.getElementById('menuGuestsTitle').textContent = allGuests
+    ? `Send to all occupied rooms (${eligible.length} rooms):`
+    : `Send to dinner guests only (${eligible.length} rooms):`;
+
+  if (!eligible.length) {
+    document.getElementById('menuGuestList').innerHTML =
+      `<div style="font-size:11px;color:var(--muted);font-style:italic;padding:8px">No eligible guests found</div>`;
+    return;
+  }
+
+  document.getElementById('menuGuestList').innerHTML = eligible.map(({ name, r }) => {
+    const initials = (r.guest.name || 'G').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const phone = r.guest.phone || '';
+    const safeId = name.replace(/\s/g,'_');
+    const safeName = (r.guest.name||'Guest').replace(/'/g,"\\x27");
+    return `<div class="menu-guest-row">
+      <div class="menu-guest-row-top">
+        <div class="menu-guest-info">
+          <div class="menu-guest-av">${initials}</div>
+          <div>
+            <div class="menu-guest-name">${r.guest.name || 'Guest'}</div>
+            <div class="menu-guest-room">${name} · ${r.guest.pax} guest${r.guest.pax > 1 ? 's' : ''}</div>
+          </div>
+        </div>
+        <div class="menu-guest-phone-wrap">
+          <input class="menu-guest-phone" type="tel" id="gph_${safeId}"
+            value="${phone}" placeholder="+27 82 000 0000"
+            oninput="rooms['${name.replace(/'/g,"\\x27")}'].guest.phone=this.value;save();renderMenuGuests()">
+          ${phone
+            ? `<button class="menu-send-one" id="msend_${safeId}"
+                onclick="sendMenuToOne('${name.replace(/'/g,"\\x27")}','${phone.replace(/\D/g,'')}',this)">
+                💬 Send
+              </button>`
+            : `<span class="menu-no-phone">No number</span>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SEND TO ONE GUEST (with URL shortening) ───────────────────────────────
+async function sendMenuToOne(roomName, phone, btn){
+  btn.textContent = '…';
+  btn.disabled = true;
+  let msg;
+  if(menuUrl){
+    const longUrl = buildMenuUrl();
+    const shortLink = await shortenUrl(longUrl);
+    msg = buildMenuMessage(shortLink);
+  } else {
+    msg = buildMenuMessage();
+  }
+  const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+  btn.textContent = '✓';
+  btn.classList.add('sent');
+  btn.disabled = false;
+  toast(`Menu sent to ${rooms[roomName]?.guest?.name || 'guest'}`);
+}
+
+// ── SEND TO ALL GUESTS ────────────────────────────────────────────────────
+async function sendMenuToAll() {
+  const allGuests = document.getElementById('menuAllGuests').checked;
+  const eligible = ROOMS.filter(name => {
+    const r = rooms[name];
+    return r.status !== 'vacant' && (allGuests || r.dinner) && r.guest.phone;
+  });
+
+  if (!eligible.length) {
+    toast('No guest phone numbers saved — add numbers to each room first');
+    return;
+  }
+
+  localStorage.setItem('tb_menu', JSON.stringify(menuSections));
+
+  // Shorten URL once, reuse for all guests
+  let shortLink = null;
+  if(menuUrl){
+    toast('Shortening menu link…');
+    const longUrl = buildMenuUrl();
+    shortLink = await shortenUrl(longUrl);
+  }
+
+  const msg = buildMenuMessage(shortLink);
+
+  eligible.forEach((name, i) => {
+    const phone = rooms[name].guest.phone.replace(/\D/g, '');
+    setTimeout(() => {
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }, i * 700);
+    const btn = document.getElementById(`msend_${name.replace(/\s/g,'_')}`);
+    if(btn){ btn.textContent = '✓'; btn.classList.add('sent'); }
+  });
+
+  toast(`Menu sent to ${eligible.length} guest${eligible.length > 1 ? 's' : ''}`);
+}
+
+document.getElementById('ovMenu').addEventListener('click', e => {
+  if (e.target === document.getElementById('ovMenu')) closeMenuModal();
+});
+
+// Keep preview live when date/time/note change
+['menuDate','menuTime','menuNote'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateMenuPreview);
+});
+
+
+// ── WEEKLY PLANNER ────────────────────────────────────────────────────────
+let plannerWeekStart = null;   // Monday of currently displayed week
+let plannerWeekDelta = 0;      // offset in weeks from current week
+let bookingCtx = null;         // {roomName, ciDate} for current edit
+
+function getMondayOfWeek(date, delta){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day); // adjust so Mon=0
+  d.setDate(d.getDate() + diff + delta * 7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function fmt(d){ return d.toISOString().split('T')[0]; }
+function addDays(d, n){ const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function parseDate(s){ return s ? new Date(s+'T00:00:00') : null; }
+
+function openPlanner(){
+  plannerWeekDelta = 0;
+  renderPlanner();
+  document.getElementById('ovPlanner').classList.add('open');
+}
+function closePlanner(){ document.getElementById('ovPlanner').classList.remove('open'); }
+
+function plannerWeekOffset(n){ plannerWeekDelta += n; renderPlanner(); }
+function plannerGoToday(){ plannerWeekDelta = 0; renderPlanner(); }
+
+function renderPlanner(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const monday = getMondayOfWeek(today, plannerWeekDelta);
+  plannerWeekStart = monday;
+
+  // Week label
+  const sunday = addDays(monday, 6);
+  const opts = {day:'numeric', month:'short'};
+  document.getElementById('plannerWeekLabel').textContent =
+    monday.toLocaleDateString('en-ZA', opts) + ' – ' + sunday.toLocaleDateString('en-ZA', opts) + ' ' + sunday.getFullYear();
+
+  // Build 7-day columns
+  const days = Array.from({length:7}, (_,i) => addDays(monday, i));
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // Grid: (rooms+1) x (days+1) using CSS grid
+  // columns: room-label + 7 days
+  const grid = document.getElementById('plannerGrid');
+  grid.style.gridTemplateColumns = '140px repeat(7, 1fr)';
+
+  let html = '';
+
+  // Header row
+  html += '<div class="planner-col-room">Room</div>';
+  days.forEach((d, i) => {
+    const isToday = fmt(d) === fmt(today);
+    html += `<div class="planner-col-day${isToday?' planner-day-today':''}">
+      <div class="planner-day-name">${dayNames[i]}</div>
+      <div class="planner-day-num">${d.getDate()}</div>
+    </div>`;
+  });
+
+  // Room rows
+  ROOMS.forEach(name => {
+    const r = rooms[name];
+    const statusDot = r.status==='occupied'?'ps-occ': r.status==='checkout'?'ps-chk':'ps-vac';
+
+    html += `<div class="planner-room-label">
+      <div class="planner-room-status ${statusDot}"></div>
+      <div class="planner-room-name">${name}</div>
+    </div>`;
+
+    days.forEach(d => {
+      const dateStr = fmt(d);
+      const isToday = dateStr === fmt(today);
+      const booking = getRoomBookingOnDate(name, dateStr);
+
+      html += `<div class="planner-cell${isToday?' today-col':''}" onclick="plannerCellClick('${name.replace(/'/g,'\x27')}','${dateStr}',event)">`;
+
+      if(booking){
+        const isCheckout = booking.checkout.date === dateStr;
+        const isCheckin  = booking.checkin.date === dateStr;
+        const cls = isCheckout ? 'chk' : 'occ';
+        const label = isCheckin ? '▶ Check-in' : isCheckout ? '◀ Check-out' : '';
+        html += `<div class="booking-block ${cls}" onclick="event.stopPropagation();editBooking('${name.replace(/'/g,'\x27')}','${booking.checkin.date}',event)">
+          <button class="bb-del" onclick="event.stopPropagation();confirmDeleteBooking('${name.replace(/'/g,'\x27')}')">✕</button>
+          <div class="bb-name">${booking.guest.name||'Guest'}</div>
+          <div class="bb-dates">${label||'Staying'}</div>
+        </div>`;
+      } else {
+        html += `<div class="cell-add">+</div>`;
+      }
+
+      html += '</div>';
+    });
+  });
+
+  grid.innerHTML = html;
+}
+
+// Returns the room's booking data if the room is booked on a given date
+function getRoomBookingOnDate(roomName, dateStr){
+  const r = rooms[roomName];
+  if(r.status === 'vacant') return null;
+  const ci = r.checkin.date, co = r.checkout.date;
+  if(!ci || !co) return null;
+  // Room is booked on this date if dateStr is between checkin (inclusive) and checkout (inclusive)
+  if(dateStr >= ci && dateStr <= co) return r;
+  return null;
+}
+
+// Click on empty cell → add new booking
+function plannerCellClick(roomName, dateStr, event){
+  if(event.target.closest('.booking-block')) return; // handled by editBooking
+  const r = rooms[roomName];
+  // Pre-fill check-in as clicked date, checkout as next day
+  const ciDate = dateStr;
+  const coDate = fmt(addDays(parseDate(dateStr), 1));
+
+  bookingCtx = {roomName, isNew: true};
+  document.getElementById('bookingTitle').textContent = 'Add Booking';
+  document.getElementById('bookingRoom').textContent = roomName.toUpperCase();
+  document.getElementById('bkName').value = '';
+  document.getElementById('bkPax').value = 2;
+  document.getElementById('bkNat').value = '';
+  document.getElementById('bkCiDate').value = ciDate;
+  document.getElementById('bkCiTime').value = '14:00';
+  document.getElementById('bkCoDate').value = coDate;
+  document.getElementById('bkCoTime').value = '11:00';
+  document.getElementById('bkPhone').value = '';
+  document.getElementById('bkBk').checked = false;
+  document.getElementById('bkDn').checked = false;
+  document.getElementById('bkNotes').value = '';
+  document.getElementById('bkDeleteBtn').style.display = 'none';
+  document.getElementById('ovBooking').classList.add('open');
+}
+
+// Click on existing booking → edit
+function editBooking(roomName, ciDate, event){
+  const r = rooms[roomName];
+  bookingCtx = {roomName, isNew: false};
+  document.getElementById('bookingTitle').textContent = 'Edit Booking';
+  document.getElementById('bookingRoom').textContent = roomName.toUpperCase();
+  document.getElementById('bkName').value = r.guest.name||'';
+  document.getElementById('bkPax').value = r.guest.pax||2;
+  document.getElementById('bkNat').value = r.guest.nationality||'';
+  document.getElementById('bkCiDate').value = r.checkin.date||'';
+  document.getElementById('bkCiTime').value = r.checkin.time||'14:00';
+  document.getElementById('bkCoDate').value = r.checkout.date||'';
+  document.getElementById('bkCoTime').value = r.checkout.time||'11:00';
+  document.getElementById('bkPhone').value = r.guest.phone||'';
+  document.getElementById('bkBk').checked = r.breakfast||false;
+  document.getElementById('bkDn').checked = r.dinner||false;
+  document.getElementById('bkNotes').value = r.notes||'';
+  document.getElementById('bkDeleteBtn').style.display = 'inline-flex';
+  document.getElementById('ovBooking').classList.add('open');
+}
+
+function confirmDeleteBooking(roomName){
+  bookingCtx = {roomName, isNew: false};
+  deleteBooking();
+}
+
+function deleteBooking(){
+  if(!bookingCtx) return;
+  const {roomName} = bookingCtx;
+  rooms[roomName] = blank();
+  save(); renderAll(); renderPlanner(); closeBooking();
+  toast(`Booking cleared for ${roomName}`);
+}
+
+function saveBooking(){
+  if(!bookingCtx) return;
+  const {roomName} = bookingCtx;
+  const ciDate = document.getElementById('bkCiDate').value;
+  const coDate = document.getElementById('bkCoDate').value;
+  if(!ciDate || !coDate){ toast('Please set check-in and check-out dates'); return; }
+  if(coDate < ciDate){ toast('Check-out must be after check-in'); return; }
+
+  const today = fmt(new Date());
+  // Determine status based on dates
+  let status = 'occupied';
+  if(coDate === today) status = 'checkout';
+  else if(ciDate > today) status = 'occupied'; // future — pre-block as occupied
+  else if(ciDate <= today && coDate >= today) status = 'occupied';
+
+  rooms[roomName] = {
+    status,
+    guest:{
+      name: document.getElementById('bkName').value.trim(),
+      pax: parseInt(document.getElementById('bkPax').value)||1,
+      nationality: document.getElementById('bkNat').value.trim(),
+      phone: document.getElementById('bkPhone').value.trim()
+    },
+    checkin:  { date: ciDate, time: document.getElementById('bkCiTime').value||'14:00' },
+    checkout: { date: coDate, time: document.getElementById('bkCoTime').value||'11:00' },
+    breakfast: document.getElementById('bkBk').checked,
+    dinner:    document.getElementById('bkDn').checked,
+    hk: rooms[roomName]?.hk || {cleaned:false, turndown:false},
+    notes: document.getElementById('bkNotes').value.trim()
+  };
+
+  save(); renderAll(); renderPlanner(); closeBooking();
+  toast(`Booking saved for ${roomName}`);
+}
+
+function closeBooking(){
+  document.getElementById('ovBooking').classList.remove('open');
+  bookingCtx = null;
+}
+
+// AUTO-STATUS: run each time page loads or day changes —
+// updates rooms to 'checkout' if today is their checkout date,
+// 'vacant' if checkout was in the past
+function autoUpdateStatuses(){
+  const today = fmt(new Date());
+  let changed = false;
+  ROOMS.forEach(name => {
+    const r = rooms[name];
+    if(r.status === 'vacant') return;
+    const co = r.checkout.date;
+    const ci = r.checkin.date;
+    if(!co) return;
+    if(co < today){
+      // Past checkout — auto vacate
+      rooms[name] = blank();
+      changed = true;
+    } else if(co === today && r.status !== 'checkout'){
+      rooms[name].status = 'checkout';
+      changed = true;
+    } else if(ci && ci <= today && co > today && r.status !== 'occupied'){
+      rooms[name].status = 'occupied';
+      changed = true;
+    }
+  });
+  if(changed){ save(); renderAll(); }
+}
+
+load();autoUpdateStatuses();renderAll();
+// ── EXCEL IMPORT ──────────────────────────────────────────────────────────
+let importRows = []; // parsed + validated rows ready to import
+
+function openImportModal(){
+  importRows = [];
+  document.getElementById('importPreviewWrap').style.display = 'none';
+  document.getElementById('importConfirmBtn').style.display = 'none';
+  document.getElementById('importFile').value = '';
+  document.getElementById('importDrop').classList.remove('drag-over');
+  document.getElementById('ovImport').classList.add('open');
+}
+function closeImportModal(){ document.getElementById('ovImport').classList.remove('open'); }
+
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('importDrop').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file) processFile(file);
+}
+function handleFileSelect(e){
+  const file = e.target.files[0];
+  if(file) processFile(file);
+}
+
+// Column name aliases — flexible matching
+const COL_MAP = {
+  room:        ['room','suite','villa','unit'],
+  name:        ['guest','guest name','name','party','guest/party','full name'],
+  pax:         ['pax','guests','people','persons','adults','number of guests','no.'],
+  checkin:     ['check-in','check in','checkin','arrival','arrive','ci','from'],
+  checkout:    ['check-out','check out','checkout','departure','depart','co','to'],
+  nationality: ['nationality','country','country of origin'],
+  phone:       ['phone','mobile','whatsapp','contact','number','tel'],
+  breakfast:   ['breakfast','bkf','bk'],
+  dinner:      ['dinner','din'],
+  notes:       ['notes','note','special requests','remarks','comments']
+};
+
+function matchCol(header){
+  const h = header.toString().toLowerCase().trim();
+  for(const [key, aliases] of Object.entries(COL_MAP)){
+    if(aliases.some(a => h.includes(a) || a.includes(h))) return key;
+  }
+  return null;
+}
+
+function parseDateCell(val){
+  if(!val) return '';
+  // Excel serial date number
+  if(typeof val === 'number'){
+    const d = new Date(Math.round((val - 25569) * 864e5));
+    return d.toISOString().split('T')[0];
+  }
+  const s = val.toString().trim();
+  // YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // DD/MM/YYYY or DD-MM-YYYY
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  // MM/DD/YYYY
+  const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m2){
+    const month = parseInt(m2[1]), day = parseInt(m2[2]);
+    if(month <= 12) return `${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
+  }
+  // Try native parse
+  const d = new Date(s);
+  if(!isNaN(d)) return d.toISOString().split('T')[0];
+  return '';
+}
+
+function parseBool(val){
+  if(val === null || val === undefined || val === '') return false;
+  const s = val.toString().toLowerCase().trim();
+  return ['yes','y','true','1','x'].includes(s);
+}
+
+function fuzzyRoomMatch(name){
+  if(!name) return null;
+  const n = name.toString().toLowerCase().trim();
+  return ROOMS.find(r => r.toLowerCase() === n) ||
+         ROOMS.find(r => r.toLowerCase().includes(n) || n.includes(r.toLowerCase())) ||
+         null;
+}
+
+function processFile(file){
+  // Load SheetJS dynamically if not already loaded
+  if(typeof XLSX === 'undefined'){
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = () => readFile(file);
+    script.onerror = () => toast('Failed to load Excel library — check your internet connection');
+    document.head.appendChild(script);
+  } else {
+    readFile(file);
+  }
+}
+
+function readFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, {type:'array', cellDates:false});
+
+      // ── Detect Tintswalo Day Sheet format ──────────────────────────────
+      // Has 31 sheets named "1st", "2nd" etc. OR first sheet contains
+      // "TINTSWALO BOULDERS DAYSHEET" in cell A1
+      const firstWs = wb.Sheets[wb.SheetNames[0]];
+      const firstRaw = XLSX.utils.sheet_to_json(firstWs, {header:1, raw:true, defval:''});
+      const isDaySheet =
+        (wb.SheetNames.length >= 28 && /^\d+(st|nd|rd|th)\s*$/i.test(wb.SheetNames[0])) ||
+        (firstRaw[0] && String(firstRaw[0][0]||'').toUpperCase().includes('TINTSWALO'));
+
+      if(isDaySheet){
+        parseDaySheet(wb);
+      } else {
+        // Generic flat table format (original import logic)
+        const raw = XLSX.utils.sheet_to_json(firstWs, {header:1, raw:true, defval:''});
+        parseSheet(raw);
+      }
+    } catch(err){
+      toast('Could not read file — is it a valid Excel or CSV?');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── TINTSWALO DAY SHEET PARSER ────────────────────────────────────────────
+// Each sheet = one day. Each room block spans 4 rows:
+//   row i-2 (name row):  col1=first name, col2=nationality, col4=pax  (arrivals)
+//                        col3=first name, col2=nationality, col4=pax  (stayovers)
+//   row i-1 (num row):   col1=surname+dates(col6,col7)+acc(col9)      (arrivals)
+//                        col3=surname                                   (stayovers)
+//   row i   (room row):  col0=ROOM NAME, col1=booking ref              (arrivals)
+//                        col0=ROOM NAME, col3=booking ref              (stayovers)
+const DS_ROOM_MAP = {
+  'DROMMEDARIS':'Drommedaris','WATERWITCH':'Water Witch','WATER WITCH':'Water Witch',
+  'MAYFLOWER':'Mayflower','MARY ROSE':'Mary Rose','ENDEVOUR':'Endeavour',
+  'ENDEAVOUR':'Endeavour','GROSVENOR':'Grosvenor','BOUNTY':'Bounty',
+  'CUTTY SARK':'Cutty Sark','VICTORY':'Victory'
+};
+
+function parseDaySheet(wb){
+  const bookings = {}; // booking_ref → booking
+
+  function cl(v){ if(v===null||v===undefined) return ''; const s=String(v).trim(); return (s==='nan'||s==='NaT'||s==='None')?'':s; }
+  function fmtd(v){
+    const s=cl(v); if(!s) return '';
+    // Excel serial date
+    if(typeof v==='number' && v>40000 && v<100000){
+      const d=new Date(Math.round((v-25569)*864e5));
+      return d.toISOString().split('T')[0];
+    }
+    // ISO string from SheetJS (2026-03-01 00:00:00)
+    const m=s.match(/^(\d{4}-\d{2}-\d{2})/);
+    if(m) return m[1];
+    // DD/MM/YYYY
+    const m2=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if(m2) return `${m2[3]}-${m2[2].padStart(2,'0')}-${m2[1].padStart(2,'0')}`;
+    return '';
+  }
+  const NAT_SKIP=['return','vip','no indem','ta guest','eta ','pre','sup','lux','std','cou','11/','early','late'];
+  function cleanNat(v){ const s=cl(v); return NAT_SKIP.some(x=>s.toLowerCase().includes(x))?'':s; }
+
+  wb.SheetNames.forEach(sheetName => {
+    const ws = wb.Sheets[sheetName];
+    const raw = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+
+    for(let i=0; i<raw.length; i++){
+      const cell0 = cl(raw[i][0]).toUpperCase();
+      if(!(cell0 in DS_ROOM_MAP)) continue;
+      const roomStd = DS_ROOM_MAP[cell0];
+      if(i < 2) continue;
+
+      const nameRow = raw[i-2];
+      const numRow  = raw[i-1];
+      const bkRow   = raw[i];
+
+      // Try arrival (col1) then stayover (col3)
+      for(const [nc, bc] of [[1,1],[3,3]]){
+        const fname = cl(nameRow[nc]);
+        const sname = cl(numRow[nc]);
+        const bknum = cl(bkRow[bc]);
+        if(!/^\d{5,7}$/.test(bknum)) continue;
+        if(!fname && !sname) continue;
+
+        const nat  = cleanNat(numRow[2]) || cleanNat(nameRow[2]);
+        let   pax  = 2;
+        const pStr = cl(nameRow[4]);
+        if(pStr && /^\d+$/.test(pStr)) pax = parseInt(pStr);
+
+        const ci  = fmtd(numRow[6]);
+        const co  = fmtd(numRow[7]);
+        if(!ci || !co) continue;  // skip if no dates
+
+        const acc = cl(numRow[9]).toUpperCase();
+        const breakfast = acc.includes('BB') || acc.includes('HB') || acc.includes('FB');
+        const dinner    = acc.includes('HB') || acc.includes('FB');
+
+        const n1 = cl(nameRow[10]), n2 = cl(numRow[10]);
+        const notes = [n1,n2].filter(Boolean).join(' | ');
+
+        const fullName = [fname,sname].filter(Boolean).join(' ');
+
+        if(!bookings[bknum]){
+          bookings[bknum] = {
+            room: roomStd, name: fullName, pax, nationality: nat,
+            ci, co, breakfast, dinner, notes, booking_ref: bknum,
+            phone: '', errors: []
+          };
+        }
+        break;
+      }
+    }
+  });
+
+  const rows = Object.values(bookings);
+  // Mark past bookings as skippable (not an error, just info)
+  const today = fmt(new Date());
+  rows.forEach(r => {
+    if(r.co < today) r.pastCheckout = true;
+  });
+
+  importRows = rows.filter(r => !r.pastCheckout);
+  showImportPreview(rows, []);
+}
+
+function parseSheet(raw){
+  if(raw.length < 2){ toast('Spreadsheet appears empty'); return; }
+
+  // Find header row
+  let headerIdx = 0, colMap = {};
+  for(let i=0; i<Math.min(5,raw.length); i++){
+    const mapped = {};
+    raw[i].forEach((cell,ci)=>{ const key=matchCol(cell); if(key&&!(key in mapped)) mapped[key]=ci; });
+    if('room' in mapped && ('checkin' in mapped || 'checkout' in mapped)){ headerIdx=i; colMap=mapped; break; }
+  }
+  if(!('room' in colMap)){ toast('Could not find a "Room" column — check your spreadsheet headers'); return; }
+
+  const rows = [];
+  for(let i=headerIdx+1; i<raw.length; i++){
+    const row = raw[i];
+    if(row.every(c=>c===''||c===null)) continue;
+    const get = key => colMap[key]!==undefined ? row[colMap[key]] : '';
+    const roomRaw=get('room'), room=fuzzyRoomMatch(roomRaw);
+    const ci=parseDateCell(get('checkin')), co=parseDateCell(get('checkout'));
+    const errs=[];
+    if(!room) errs.push(`Unknown room: "${roomRaw}"`);
+    if(!ci)   errs.push(`Invalid check-in: "${get('checkin')}"`);
+    if(!co)   errs.push(`Invalid check-out: "${get('checkout')}"`);
+    if(ci&&co&&co<ci) errs.push('Check-out before check-in');
+    rows.push({
+      room, roomRaw, name:(get('name')||'').toString().trim(), pax:parseInt(get('pax'))||1,
+      nationality:(get('nationality')||'').toString().trim(), phone:(get('phone')||'').toString().trim(),
+      ci, co, breakfast:parseBool(get('breakfast')), dinner:parseBool(get('dinner')),
+      notes:(get('notes')||'').toString().trim(), errors:errs, rowNum:i+1
+    });
+  }
+  importRows = rows.filter(r=>r.errors.length===0);
+  showImportPreview(rows, rows.filter(r=>r.errors.length>0));
+}
+
+function showImportPreview(rows, errRows){
+  const wrap = document.getElementById('importPreviewWrap');
+  const past = rows.filter(r => r.pastCheckout);
+  const ok   = rows.filter(r => !r.errors?.length && !r.pastCheckout);
+
+  document.getElementById('importPreviewTitle').textContent =
+    `Found ${rows.length} booking${rows.length!==1?'s':''} · ${ok.length} to import · ${past.length} past · ${errRows.length} errors`;
+
+  const thead = `<tr>
+    <th>Ref</th><th>Room</th><th>Guest</th><th>Pax</th>
+    <th>Check-in</th><th>Check-out</th><th>Nat</th><th>Bkf</th><th>Status</th>
+  </tr>`;
+
+  const tbody = rows.map(r => {
+    const isErr  = r.errors?.length;
+    const isPast = r.pastCheckout;
+    const cls    = isErr ? 'row-err' : isPast ? 'row-warn' : 'row-ok';
+    const status = isErr ? '⚠ ' + r.errors.join('; ') : isPast ? '↩ Past checkout' : '✓ Ready';
+    return `<tr class="${cls}">
+      <td>${r.booking_ref||r.rowNum||'—'}</td>
+      <td>${r.room||r.roomRaw||'—'}</td>
+      <td>${r.name||'—'}</td>
+      <td>${r.pax}</td>
+      <td>${r.ci||'—'}</td>
+      <td>${r.co||'—'}</td>
+      <td>${r.nationality||'—'}</td>
+      <td>${r.breakfast?'✓':'—'}</td>
+      <td style="color:${isErr?'var(--rust-light)':isPast?'var(--muted)':'var(--sage)'}">${status}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('importPreviewTable').innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+
+  if(errRows.length){
+    const errEl = document.getElementById('importErrors');
+    errEl.innerHTML = `<strong>⚠ ${errRows.length} row${errRows.length!==1?'s':''} with errors (will be skipped):</strong><br>` +
+      errRows.map(r => `${r.booking_ref||'Row '+r.rowNum}: ${r.errors.join(' · ')}`).join('<br>');
+    errEl.style.display = 'block';
+  } else {
+    document.getElementById('importErrors').style.display = 'none';
+  }
+
+  wrap.style.display = 'block';
+  const btn = document.getElementById('importConfirmBtn');
+  btn.style.display = ok.length ? 'inline-flex' : 'none';
+  btn.textContent = `✓ Import ${ok.length} Booking${ok.length!==1?'s':''}`;
+}
+
+function confirmImport(){
+  if(!importRows.length){ toast('Nothing to import'); return; }
+  const today = fmt(new Date());
+  let imported = 0, skipped = 0;
+
+  importRows.forEach(r => {
+    if(!r.room){ skipped++; return; }
+    let status = 'occupied';
+    if(r.co < today) { skipped++; return; } // past checkout — skip
+    if(r.co === today) status = 'checkout';
+
+    // Preserve HK state if room already has data
+    const existing = rooms[r.room];
+    rooms[r.room] = {
+      status,
+      guest: { name:r.name, pax:r.pax, nationality:r.nationality, phone:r.phone },
+      checkin:  { date:r.ci, time:'14:00' },
+      checkout: { date:r.co, time:'11:00' },
+      breakfast: r.breakfast,
+      dinner:    r.dinner,
+      hk: existing?.hk || {cleaned:false, turndown:false},
+      notes: r.notes
+    };
+    imported++;
+  });
+
+  save(); renderAll();
+  if(document.getElementById('ovPlanner').classList.contains('open')) renderPlanner();
+  closeImportModal();
+  toast(`✓ ${imported} booking${imported!==1?'s':''} imported${skipped?' · '+skipped+' skipped':''}`, 4000);
+}
+
+// ── DOWNLOAD TEMPLATE ─────────────────────────────────────────────────────
+function downloadTemplate(){
+  if(typeof XLSX === 'undefined'){
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = _downloadTemplate;
+    document.head.appendChild(script);
+  } else { _downloadTemplate(); }
+}
+
+function _downloadTemplate(){
+  const headers = ['Room','Guest Name','Pax','Check-in','Check-out','Nationality','Phone','Breakfast','Dinner','Notes'];
+  const examples = ROOMS.map((r,i) => [
+    r,
+    `Guest ${i+1}`,
+    2,
+    fmt(addDays(new Date(), i)),
+    fmt(addDays(new Date(), i+2)),
+    'South African',
+    '+27 82 000 000' + i,
+    'Yes', 'No', ''
+  ]);
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...examples]);
+  // Style header row width
+  ws['!cols'] = headers.map((h,i) => ({wch: [20,24,6,14,14,16,18,10,8,20][i]}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Reservations');
+  XLSX.writeFile(wb, 'Tintswalo_Reservations_Template.xlsx');
+  toast('Template downloaded');
+}
+</script>
+</body>
+</html>
