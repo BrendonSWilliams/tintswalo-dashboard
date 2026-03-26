@@ -550,11 +550,21 @@
           <div class="mf"><label>Name</label><input type="text" id="newUserName" placeholder="e.g. John Smith"></div>
           <div class="mf"><label>Password</label><input type="password" id="newUserPass" placeholder="Set a password"></div>
         </div>
-        <div class="mf" style="margin-bottom:10px">
+        <div class="mf" style="margin-bottom:8px">
           <label>Role</label>
-          <select id="newUserRole" style="font-family:'Montserrat',sans-serif;font-size:12px;background:none;border:none;color:var(--navy);width:100%;outline:none;cursor:pointer">
-            <option value="staff">Staff (view only)</option>
+          <select id="newUserRole" onchange="toggleTeamSelect()" style="font-family:'Montserrat',sans-serif;font-size:12px;padding:6px 8px;border:1px solid var(--sand-dim);border-radius:4px;color:var(--navy);width:100%;background:white">
+            <option value="staff">Staff (restricted view)</option>
             <option value="admin">Admin (full access)</option>
+          </select>
+        </div>
+        <div class="mf" id="newUserTeamWrap" style="margin-bottom:10px">
+          <label>Team</label>
+          <select id="newUserTeam" style="font-family:'Montserrat',sans-serif;font-size:12px;padding:6px 8px;border:1px solid var(--sand-dim);border-radius:4px;color:var(--navy);width:100%;background:white">
+            <option value="hk">🧹 Housekeeping</option>
+            <option value="kt">🍽️ Kitchen</option>
+            <option value="svc">🛎️ Service</option>
+            <option value="mnt">🔧 Maintenance</option>
+            <option value="sec">🛡️ Security</option>
           </select>
         </div>
         <button class="btn bp" style="width:100%" onclick="addUser()">Add User</button>
@@ -2087,6 +2097,8 @@ function openUsersModal(){
   document.getElementById('newUserName').value = '';
   document.getElementById('newUserPass').value = '';
   document.getElementById('newUserRole').value = 'staff';
+  document.getElementById('newUserTeam').value = 'hk';
+  document.getElementById('newUserTeamWrap').style.display = 'block';
   document.getElementById('chgPassNew').value = '';
   document.getElementById('chgPassConfirm').value = '';
   document.getElementById('usersError').style.display = 'none';
@@ -2113,22 +2125,23 @@ function renderUsersList(){
 
 function toggleTeamSelect(){
   const role = document.getElementById('newUserRole').value;
-  document.getElementById('newUserTeamWrap').style.display = role==='admin'?'none':'block';
+  document.getElementById('newUserTeamWrap').style.display = role === 'admin' ? 'none' : 'block';
 }
 
 function addUser(){
   const name = document.getElementById('newUserName').value.trim();
-  const pass = document.getElementById('newUserPass').value;
+  const pass = document.getElementById('newUserPass').value.trim();
   const role = document.getElementById('newUserRole').value;
-  const team = role==='admin'?null:document.getElementById('newUserTeam').value;
+  const team = role === 'admin' ? null : document.getElementById('newUserTeam').value;
   const err  = document.getElementById('usersError');
 
-  if(!name){ err.textContent='Please enter a name'; err.style.display='block'; return; }
-  if(pass.length < 4){ err.textContent='Password must be at least 4 characters'; err.style.display='block'; return; }
+  err.style.display = 'none';
+  if(!name){ err.textContent = 'Please enter a name'; err.style.display = 'block'; return; }
+  if(pass.length < 4){ err.textContent = 'Password must be at least 4 characters'; err.style.display = 'block'; return; }
 
   const users = getUsers();
   if(users.find(u => u.name.toLowerCase() === name.toLowerCase())){
-    err.textContent='A user with that name already exists'; err.style.display='block'; return;
+    err.textContent = 'A user with that name already exists'; err.style.display = 'block'; return;
   }
 
   users.push({ name, password: pass, role, team });
@@ -2136,8 +2149,7 @@ function addUser(){
   renderUsersList();
   document.getElementById('newUserName').value = '';
   document.getElementById('newUserPass').value = '';
-  err.style.display = 'none';
-  toast(`✓ ${name} added`);
+  toast('✓ ' + name + ' added');
 }
 
 function removeUser(i){
